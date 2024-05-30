@@ -3,40 +3,38 @@ package eu.pb4.placeholders.impl.placeholder.builtin;
 import eu.pb4.placeholders.api.PlaceholderResult;
 import eu.pb4.placeholders.api.Placeholders;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.SpawnHelper;
+import net.minecraft.world.WorldServer;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class WorldPlaceholders {
     static final int CHUNK_AREA = (int)Math.pow(17.0D, 2.0D);
 
     public static void register() {
-        Placeholders.register(new Identifier("world", "time"), (ctx, arg) -> {
-            ServerWorld world;
+        Placeholders.register(new ResourceLocation("world", "time"), (ctx, arg) -> {
+            WorldServer world;
             if (ctx.player() != null) {
-                world = ctx.player().getWorld();
+                world = ctx.player().getServerWorld();
             } else {
-                world = ctx.server().getOverworld();
+                world = (WorldServer) ctx.server().getEntityWorld();
             }
 
-            long dayTime = (long) (world.getTimeOfDay() * 3.6 / 60);
+            long dayTime = (long) (world.getWorldTime() * 3.6 / 60);
 
             return PlaceholderResult.value(String.format("%02d:%02d", (dayTime / 60 + 6) % 24, dayTime % 60));
         });
 
-        Placeholders.register(new Identifier("world", "time_alt"), (ctx, arg) -> {
-            ServerWorld world;
+        Placeholders.register(new ResourceLocation("world", "time_alt"), (ctx, arg) -> {
+            WorldServer world;
             if (ctx.player() != null) {
-                world = ctx.player().getWorld();
+                world = ctx.player().getServerWorld();
             } else {
-                world = ctx.server().getOverworld();
+                world = (WorldServer) ctx.server().getEntityWorld();
             }
 
-            long dayTime = (long) (world.getTimeOfDay() * 3.6 / 60);
+            long dayTime = (long) (world.getWorldTime() * 3.6 / 60);
             long x = (dayTime / 60 + 6) % 24;
             long y = x % 12;
             if (y == 0) {
@@ -45,66 +43,66 @@ public class WorldPlaceholders {
             return PlaceholderResult.value(String.format("%02d:%02d %s", y, dayTime % 60, x > 11 ? "PM" : "AM" ));
         });
 
-        Placeholders.register(new Identifier("world", "day"), (ctx, arg) -> {
-            ServerWorld world;
+        Placeholders.register(new ResourceLocation("world", "day"), (ctx, arg) -> {
+            WorldServer world;
             if (ctx.player() != null) {
-                world = ctx.player().getWorld();
+                world = ctx.player().getServerWorld();
             } else {
-                world = ctx.server().getOverworld();
+                world = (WorldServer) ctx.server().getEntityWorld();
             }
 
-            return PlaceholderResult.value("" + world.getTimeOfDay() / 24000);
+            return PlaceholderResult.value("" + world.getTotalWorldTime() / 24000);
         });
 
-        Placeholders.register(new Identifier("world", "id"), (ctx, arg) -> {
-            ServerWorld world;
+//        Placeholders.register(new ResourceLocation("world", "id"), (ctx, arg) -> {
+//            WorldServer world;
+//            if (ctx.player() != null) {
+//                world = ctx.player().getServerWorld();
+//            } else {
+//                world = (WorldServer) ctx.server().getEntityWorld();
+//            }
+//
+//            return PlaceholderResult.value(world.getRegistryKey().getValue().toString());
+//        });
+//
+//        Placeholders.register(new ResourceLocation("world", "name"), (ctx, arg) -> {
+//            WorldServer world;
+//            if (ctx.player() != null) {
+//                world = ctx.player().getServerWorld();
+//            } else {
+//                world = (WorldServer) ctx.server().getEntityWorld();
+//            }
+//            List<String> parts = new ArrayList<>();
+//            {
+//                String[] words = world.getRegistryKey().getValue().getPath().split("_");
+//                for (String word : words) {
+//                    String[] s = word.split("", 2);
+//                    s[0] = s[0].toUpperCase(Locale.ROOT);
+//                    parts.add(String.join("", s));
+//                }
+//            }
+//            return PlaceholderResult.value(String.join(" ", parts));
+//        });
+
+
+
+        Placeholders.register(new ResourceLocation("world", "player_count"), (ctx, arg) -> {
+            WorldServer world;
             if (ctx.player() != null) {
-                world = ctx.player().getWorld();
+                world = ctx.player().getServerWorld();
             } else {
-                world = ctx.server().getOverworld();
+                world = (WorldServer) ctx.server().getEntityWorld();
             }
 
-            return PlaceholderResult.value(world.getRegistryKey().getValue().toString());
+            return PlaceholderResult.value("" + world.playerEntities.size());
         });
 
-        Placeholders.register(new Identifier("world", "name"), (ctx, arg) -> {
-            ServerWorld world;
+        Placeholders.register(new ResourceLocation("world", "mob_count"), (ctx, arg) -> {
+            WorldServer world;
             if (ctx.player() != null) {
-                world = ctx.player().getWorld();
+                world = ctx.player().getServerWorld();
             } else {
-                world = ctx.server().getOverworld();
-            }
-            List<String> parts = new ArrayList<>();
-            {
-                String[] words = world.getRegistryKey().getValue().getPath().split("_");
-                for (String word : words) {
-                    String[] s = word.split("", 2);
-                    s[0] = s[0].toUpperCase(Locale.ROOT);
-                    parts.add(String.join("", s));
-                }
-            }
-            return PlaceholderResult.value(String.join(" ", parts));
-        });
-
-
-
-        Placeholders.register(new Identifier("world", "player_count"), (ctx, arg) -> {
-            ServerWorld world;
-            if (ctx.player() != null) {
-                world = ctx.player().getWorld();
-            } else {
-                world = ctx.server().getOverworld();
-            }
-
-            return PlaceholderResult.value("" + world.getPlayers().size());
-        });
-
-        Placeholders.register(new Identifier("world", "mob_count"), (ctx, arg) -> {
-            ServerWorld world;
-            if (ctx.player() != null) {
-                world = ctx.player().getWorld();
-            } else {
-                world = ctx.server().getOverworld();
+                world = (WorldServer) ctx.server().getEntityWorld();
             }
 
             SpawnHelper.Info info = world.getChunkManager().getSpawnInfo();
@@ -126,12 +124,12 @@ public class WorldPlaceholders {
             }
         });
 
-        Placeholders.register(new Identifier("world", "mob_cap"), (ctx, arg) -> {
-            ServerWorld world;
+        Placeholders.register(new ResourceLocation("world", "mob_cap"), (ctx, arg) -> {
+            WorldServer world;
             if (ctx.player() != null) {
-                world = ctx.player().getWorld();
+                world = ctx.player().getServerWorld();
             } else {
-                world = ctx.server().getOverworld();
+                world = (WorldServer) ctx.server().getEntityWorld();
             }
 
             SpawnHelper.Info info = world.getChunkManager().getSpawnInfo();

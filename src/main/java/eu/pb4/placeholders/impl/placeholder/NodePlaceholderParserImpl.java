@@ -4,8 +4,13 @@ import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.node.LiteralNode;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.node.TranslatedNode;
-import eu.pb4.placeholders.api.node.parent.*;
+import cc.unilock.nilcord.lib.placeholders.api.node.parent.*;
+import eu.pb4.placeholders.api.node.parent.ClickActionNode;
+import eu.pb4.placeholders.api.node.parent.StyledNode;
 import eu.pb4.placeholders.api.parsers.NodeParser;
+import eu.pb4.placeholders.api.node.parent.HoverNode;
+import eu.pb4.placeholders.api.node.parent.InsertNode;
+import eu.pb4.placeholders.api.node.parent.ParentNode;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;

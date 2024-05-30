@@ -1,11 +1,11 @@
 package eu.pb4.placeholders.api.node;
 
 import eu.pb4.placeholders.api.ParserContext;
-import net.minecraft.text.Text;
+import net.minecraft.util.text.ITextComponent;
 
-public record DirectTextNode(Text text) implements TextNode {
+public record DirectTextNode(ITextComponent text) implements TextNode {
     @Override
-    public Text toText(ParserContext context, boolean removeSingleSlash) {
+    public ITextComponent toText(ParserContext context, boolean removeSingleSlash) {
         return this.text;
     }
 }

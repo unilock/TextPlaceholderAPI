@@ -2,21 +2,21 @@ package eu.pb4.placeholders.api.node.parent;
 
 import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.node.TextNode;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 public final class FormattingNode extends ParentNode {
-    private final Formatting formatting;
+    private final TextFormatting formatting;
 
-    public FormattingNode(TextNode[] children, Formatting formatting) {
+    public FormattingNode(TextNode[] children, TextFormatting formatting) {
         super(children);
         this.formatting = formatting;
     }
 
     @Override
-    protected Text applyFormatting(MutableText out, ParserContext context) {
-        return out.formatted(this.formatting);
+    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) {
+        // TODO: this will not work well
+        return out.setStyle(out.getStyle().setColor(this.formatting));
     }
 
     @Override

@@ -1,11 +1,12 @@
 package eu.pb4.placeholders.api.node;
 
 import eu.pb4.placeholders.api.ParserContext;
-import net.minecraft.text.Text;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentKeybind;
 
 public record KeybindNode(String value) implements TextNode {
     @Override
-    public Text toText(ParserContext context, boolean removeSingleSlash) {
-        return Text.keybind(this.value());
+    public ITextComponent toText(ParserContext context, boolean removeSingleSlash) {
+        return new TextComponentKeybind(this.value());
     }
 }

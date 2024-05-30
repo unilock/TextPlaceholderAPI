@@ -3,9 +3,8 @@ package eu.pb4.placeholders.api.node.parent;
 import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.parsers.NodeParser;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.event.ClickEvent;
 
 public final class ClickActionNode extends ParentNode {
     private final ClickEvent.Action action;
@@ -26,8 +25,8 @@ public final class ClickActionNode extends ParentNode {
     }
 
     @Override
-    protected Text applyFormatting(MutableText out, ParserContext context) {
-        return out.setStyle(out.getStyle().withClickEvent(new ClickEvent(this.action, this.value.toText(context, true).getString())));
+    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) {
+        return out.setStyle(out.getStyle().setClickEvent(new ClickEvent(this.action, this.value.toText(context, true).getFormattedText())));
     }
 
     @Override

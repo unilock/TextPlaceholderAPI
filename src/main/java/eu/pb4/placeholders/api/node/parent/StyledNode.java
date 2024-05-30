@@ -1,9 +1,13 @@
 package eu.pb4.placeholders.api.node.parent;
 
-import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.ParserContext;
+import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.parsers.NodeParser;
-import net.minecraft.text.*;
+import eu.pb4.placeholders.impl.GeneralUtils;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -26,15 +30,15 @@ public final class StyledNode extends ParentNode {
         var style = this.style;
 
         if (hoverValue != null && style.getHoverEvent() != null && style.getHoverEvent().getAction() == HoverEvent.Action.SHOW_TEXT) {
-            style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, this.hoverValue.toText(context, true)));
+            style = style.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, this.hoverValue.toText(context, true)));
         }
 
         if (clickValue != null && style.getClickEvent() != null) {
-            style = style.withClickEvent(new ClickEvent(style.getClickEvent().getAction(), this.clickValue.toText(context, true).getString()));
+            style = style.setClickEvent(new ClickEvent(style.getClickEvent().getAction(), this.clickValue.toText(context, true).getUnformattedText()));
         }
 
         if (insertion != null) {
-            style = style.withInsertion(this.insertion.toText(context, true).getString());
+            style = style.setInsertion(this.insertion.toText(context, true).getUnformattedText());
         }
         return style;
     }
@@ -60,8 +64,8 @@ public final class StyledNode extends ParentNode {
     }
 
     @Override
-    protected Text applyFormatting(MutableText out, ParserContext context) {
-        return (out.getStyle() == Style.EMPTY ? out : Text.empty().append(out)).setStyle(this.style(context));
+    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) {
+        return (out.getStyle() == GeneralUtils.emptyStyle() ? out : GeneralUtils.emptyText().appendSibling(out)).setStyle(this.style(context));
     }
 
     @Override

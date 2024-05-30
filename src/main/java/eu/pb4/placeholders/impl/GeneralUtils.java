@@ -1,16 +1,30 @@
 package eu.pb4.placeholders.impl;
 
-import eu.pb4.placeholders.api.node.*;
-import eu.pb4.placeholders.api.node.parent.*;
+import eu.pb4.placeholders.api.node.KeybindNode;
+import eu.pb4.placeholders.api.node.LiteralNode;
+import eu.pb4.placeholders.api.node.ScoreNode;
+import eu.pb4.placeholders.api.node.TextNode;
+import eu.pb4.placeholders.api.node.TranslatedNode;
+import eu.pb4.placeholders.api.node.parent.ColorNode;
+import eu.pb4.placeholders.api.node.parent.FormattingNode;
+import eu.pb4.placeholders.api.node.parent.GradientNode;
+import eu.pb4.placeholders.api.node.parent.ParentNode;
+import eu.pb4.placeholders.api.node.parent.ParentTextNode;
+import eu.pb4.placeholders.api.node.parent.StyledNode;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.*;
-import net.minecraft.util.Formatting;
-import org.jetbrains.annotations.ApiStatus;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponentKeybind;
+import net.minecraft.util.text.TextComponentScore;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.HoverEvent;
 
 import java.util.ArrayList;
 
 
-@ApiStatus.Internal
 public class GeneralUtils {
     public static String durationToString(long x) {
         long seconds = x % 60;
@@ -31,19 +45,19 @@ public class GeneralUtils {
         }
     }
 
-    public static boolean isEmpty(Text text) {
+    public static boolean isEmpty(ITextComponent text) {
         return (
-                text.getContent() == TextContent.EMPTY
-                || (text.getContent() instanceof LiteralTextContent l && l.string().isEmpty())
+                text.getUnformattedComponentText().isEmpty()
+                || (text instanceof TextComponentString l && l.getText().isEmpty())
                ) && text.getSiblings().isEmpty();
     }
 
-    public static MutableText toGradient(Text base, GradientNode.GradientProvider posToColor) {
+    public static ITextComponent toGradient(ITextComponent base, GradientNode.GradientProvider posToColor) {
         return recursiveGradient(base, posToColor, 0, getGradientLength(base)).text();
     }
 
-    private static int getGradientLength(Text base) {
-        int length = base.getContent() instanceof LiteralTextContent l ? l.string().length() : base.getContent() == TextContent.EMPTY ? 0 : 1;
+    private static int getGradientLength(ITextComponent base) {
+        int length = base instanceof TextComponentString l ? l.getText().length() : base.getFormattedText().isEmpty() ? 0 : 1;
 
         for (var text : base.getSiblings()) {
             length += getGradientLength(text);
@@ -52,29 +66,29 @@ public class GeneralUtils {
         return length;
     }
 
-    private static TextLengthPair recursiveGradient(Text base, GradientNode.GradientProvider posToColor, int pos, int totalLength) {
+    private static TextLengthPair recursiveGradient(ITextComponent base, GradientNode.GradientProvider posToColor, int pos, int totalLength) {
         if (base.getStyle().getColor() == null) {
-            MutableText out = Text.empty().setStyle(base.getStyle());
-            if (base.getContent() instanceof LiteralTextContent literalTextContent) {
-                for (String letter : literalTextContent.string().replaceAll("\\p{So}|.", "$0\0").split("\0+")) {
+            ITextComponent out = GeneralUtils.emptyText().setStyle(base.getStyle());
+            if (base instanceof TextComponentString literalTextContent) {
+                for (String letter : literalTextContent.getText().replaceAll("\\p{So}|.", "$0\0").split("\0+")) {
                     if (!letter.isEmpty()) {
-                        out.append(Text.literal(letter).setStyle(Style.EMPTY.withColor(posToColor.getColorAt(pos++, totalLength))));
+                        out.appendSibling(new TextComponentString(letter).setStyle(emptyStyle().setColor(posToColor.getColorAt(pos++, totalLength))));
 
                     }
                 }
             } else {
-                out.append(base.copyContentOnly().setStyle(Style.EMPTY.withColor(posToColor.getColorAt(pos++, totalLength))));
+                out.appendSibling(base.createCopy().setStyle(emptyStyle().setColor(posToColor.getColorAt(pos++, totalLength))));
 
             }
 
-            for (Text sibling : base.getSiblings()) {
+            for (ITextComponent sibling : base.getSiblings()) {
                 var pair = recursiveGradient(sibling, posToColor, pos, totalLength);
                 pos = pair.length;
-                out.append(pair.text);
+                out.appendSibling(pair.text);
             }
             return new TextLengthPair(out, pos);
         }
-        return new TextLengthPair(base.copy(), pos + base.getString().length());
+        return new TextLengthPair(base.createCopy(), pos + base.getUnformattedText().length());
     }
 
     public static int hvsToRgb(float hue, float saturation, float value) {
@@ -129,84 +143,75 @@ public class GeneralUtils {
         return new HSV(h, s, cmax);
     }
 
-    public static Text removeHoverAndClick(Text input) {
+    public static ITextComponent removeHoverAndClick(ITextComponent input) {
         var output = cloneText(input);
         removeHoverAndClick(output);
         return output;
     }
 
-    private static void removeHoverAndClick(MutableText input) {
+    private static void removeHoverAndClick(TextComponentBase input) {
         if (input.getStyle() != null) {
-            input.setStyle(input.getStyle().withHoverEvent(null).withClickEvent(null));
+            input.setStyle(input.getStyle().setHoverEvent(null).setClickEvent(null));
         }
 
-        if (input.getContent() instanceof TranslatableTextContent text) {
-            for (int i = 0; i < text.getArgs().length; i++) {
-                var arg = text.getArgs()[i];
-                if (arg instanceof MutableText argText) {
+        if (input instanceof TextComponentTranslation text) {
+            for (int i = 0; i < text.getFormatArgs().length; i++) {
+                var arg = text.getFormatArgs()[i];
+                if (arg instanceof TextComponentBase argText) {
                     removeHoverAndClick(argText);
                 }
             }
         }
 
         for (var sibling : input.getSiblings()) {
-            removeHoverAndClick((MutableText) sibling);
+            removeHoverAndClick((TextComponentBase) sibling);
         }
 
     }
 
-    public static MutableText cloneText(Text input) {
-        MutableText baseText;
-        if (input.getContent() instanceof TranslatableTextContent translatable) {
+    public static ITextComponent cloneText(ITextComponent input) {
+        ITextComponent baseText;
+        if (input instanceof TextComponentTranslation translatable) {
             var obj = new ArrayList<>();
 
-            for (var arg : translatable.getArgs()) {
-                if (arg instanceof Text argText) {
+            for (var arg : translatable.getFormatArgs()) {
+                if (arg instanceof ITextComponent argText) {
                     obj.add(cloneText(argText));
                 } else {
                     obj.add(arg);
                 }
             }
 
-            baseText = Text.translatable(translatable.getKey(), obj.toArray());
+            baseText = new TextComponentTranslation(translatable.getKey(), obj.toArray());
         } else {
-            baseText = input.copyContentOnly();
+            baseText = input.createCopy();
         }
 
         for (var sibling : input.getSiblings()) {
-            baseText.append(cloneText(sibling));
+            baseText.appendSibling(cloneText(sibling));
         }
 
         baseText.setStyle(input.getStyle());
         return baseText;
     }
 
-    public static Text getItemText(ItemStack stack) {
+    public static ITextComponent getItemText(ItemStack stack) {
         if (!stack.isEmpty()) {
-            MutableText mutableText = Text.empty().append(stack.getName());
-            if (stack.hasCustomName()) {
-                mutableText.formatted(Formatting.ITALIC);
-            }
-
-            mutableText.formatted(stack.getRarity().formatting).styled((style) -> {
-                return style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackContent(stack)));
-            });
-
-            return mutableText;
+            return stack.getTextComponent();
         }
 
-        return Text.empty().append(ItemStack.EMPTY.getName());
+        return emptyText().appendText(ItemStack.EMPTY.getDisplayName());
     }
 
-    public static ParentNode convertToNodes(Text input) {
+    public static ParentNode convertToNodes(ITextComponent input) {
         var list = new ArrayList<TextNode>();
 
-        if (input.getContent() instanceof LiteralTextContent content) {
-            list.add(new LiteralNode(content.string()));
-        } else if (input.getContent() instanceof TranslatableTextContent content) {
+        if (input instanceof TextComponentString content) {
+            list.add(new LiteralNode(content.getText()));
+        } else if (input instanceof TextComponentTranslation content) {
             var args = new ArrayList<>();
-            for (var arg : content.getArgs()) {
-                if (arg instanceof Text text) {
+            for (var arg : content.getFormatArgs()) {
+                if (arg instanceof ITextComponent text) {
                     args.add(convertToNodes(text));
                 } else if (arg instanceof String s) {
                     args.add(new LiteralNode(s));
@@ -217,10 +222,10 @@ public class GeneralUtils {
 
 
             list.add(new TranslatedNode(content.getKey(), args.toArray()));
-        } else if (input.getContent() instanceof ScoreTextContent content) {
+        } else if (input instanceof TextComponentScore content) {
             list.add(new ScoreNode(content.getName(), content.getObjective()));
-        } else if (input.getContent() instanceof KeybindTextContent content) {
-            list.add(new KeybindNode(content.getKey()));
+        } else if (input instanceof TextComponentKeybind content) {
+            list.add(new KeybindNode(content.getKeybind()));
         }
 
 
@@ -228,12 +233,12 @@ public class GeneralUtils {
             list.add(convertToNodes(child));
         }
 
-        if (input.getStyle() == Style.EMPTY) {
+        if (input.getStyle() == GeneralUtils.emptyStyle()) {
             return new ParentNode(list.toArray(new TextNode[0]));
         } else {
             var style = input.getStyle();
             var hoverValue = style.getHoverEvent() != null && style.getHoverEvent().getAction() == HoverEvent.Action.SHOW_TEXT
-                    ? convertToNodes(style.getHoverEvent().getValue(HoverEvent.Action.SHOW_TEXT)) : null;
+                    ? convertToNodes(style.getHoverEvent().getValue()) : null;
 
             var clickValue = style.getClickEvent() != null ? new LiteralNode(style.getClickEvent().getValue()) : null;
             var insertion = style.getInsertion() != null ? new LiteralNode(style.getInsertion()) : null;
@@ -253,7 +258,7 @@ public class GeneralUtils {
             if (node instanceof ColorNode || node instanceof FormattingNode) {
                 return new ParentNode(list.toArray(new TextNode[0]));
             } else if (node instanceof StyledNode styledNode) {
-                return new StyledNode(list.toArray(new TextNode[0]), styledNode.rawStyle().withColor((TextColor) null), styledNode.hoverValue(), styledNode.clickValue(), styledNode.insertion());
+                return new StyledNode(list.toArray(new TextNode[0]), styledNode.rawStyle().setColor((TextFormatting) null), styledNode.hoverValue(), styledNode.clickValue(), styledNode.insertion());
             }
 
             return parentNode.copyWith(list.toArray(new TextNode[0]));
@@ -262,10 +267,18 @@ public class GeneralUtils {
         }
     }
 
+    public static ITextComponent emptyText() {
+        return new TextComponentString("");
+    }
+
+    public static Style emptyStyle() {
+        return emptyText().getStyle();
+    }
+
     public record HSV(float h, float s, float v) {
     }
 
-    public record TextLengthPair(MutableText text, int length) {
+    public record TextLengthPair(ITextComponent text, int length) {
         public static final TextLengthPair EMPTY = new TextLengthPair(null, 0);
     }
 

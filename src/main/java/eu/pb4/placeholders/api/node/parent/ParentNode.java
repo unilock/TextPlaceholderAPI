@@ -3,8 +3,7 @@ package eu.pb4.placeholders.api.node.parent;
 import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.impl.GeneralUtils;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.util.text.ITextComponent;
 
 public class ParentNode implements ParentTextNode {
     public static final ParentNode EMPTY = new ParentNode(new TextNode[0]);
@@ -25,20 +24,20 @@ public class ParentNode implements ParentTextNode {
     }
 
     @Override
-    public final Text toText(ParserContext context, boolean removeSingleSlash) {
+    public final ITextComponent toText(ParserContext context, boolean removeSingleSlash) {
         var compact = context != null && context.get(ParserContext.Key.COMPACT_TEXT) != Boolean.FALSE;
 
         if (this.children.length == 0) {
-            return Text.empty();
+            return GeneralUtils.emptyText();
         } else if ((this.children.length == 1 && this.children[0] != null) && compact) {
             var out = this.children[0].toText(context, true);
             if (GeneralUtils.isEmpty(out)) {
                 return out;
             }
 
-            return ((MutableText) this.applyFormatting(out.copy(), context)).fillStyle(out.getStyle());
+            return (this.applyFormatting(out.createCopy(), context)).setStyle(out.getStyle());
         } else {
-            MutableText base = compact ? null : Text.empty();
+            ITextComponent base = compact ? null : GeneralUtils.emptyText();
 
             for (int i = 0; i < this.children.length; i++) {
                 if (this.children[i] != null) {
@@ -47,25 +46,25 @@ public class ParentNode implements ParentTextNode {
                     if (!GeneralUtils.isEmpty(child)) {
                         if (base == null) {
                             if (child.getStyle().isEmpty()) {
-                                base = child.copy();
+                                base = child.createCopy();
                             } else {
-                                base = Text.empty();
-                                base.append(child);
+                                base = GeneralUtils.emptyText();
+                                base.appendSibling(child);
                             }
                         } else {
-                            base.append(child);
+                            base.appendSibling(child);
                         }
                     }
                 }
             }
 
             if (base == null || GeneralUtils.isEmpty(base)) {
-                return Text.empty();
+                return GeneralUtils.emptyText();
             }
 
             return this.applyFormatting(base, context);
         }
     }
 
-    protected Text applyFormatting(MutableText out, ParserContext context) { return out; };
+    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) { return out; };
 }

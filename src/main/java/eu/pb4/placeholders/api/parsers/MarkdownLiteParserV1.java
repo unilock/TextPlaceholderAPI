@@ -1,6 +1,5 @@
 package eu.pb4.placeholders.api.parsers;
 
-import com.mojang.brigadier.StringReader;
 import eu.pb4.placeholders.api.node.LiteralNode;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.node.TranslatedNode;
@@ -8,10 +7,10 @@ import eu.pb4.placeholders.api.node.parent.FormattingNode;
 import eu.pb4.placeholders.api.node.parent.ParentNode;
 import eu.pb4.placeholders.api.node.parent.ParentTextNode;
 import eu.pb4.placeholders.api.node.parent.StyledNode;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import eu.pb4.placeholders.impl.GeneralUtils;
+import com.mojang.brigadier.StringReader;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.HoverEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -44,13 +43,13 @@ public final class MarkdownLiteParserV1 implements NodeParser {
 
     public static TextNode defaultSpoilerFormatting(TextNode[] textNodes) {
         return new StyledNode(new TextNode[]{TextNode.of("["), new TranslatedNode("options.hidden"), TextNode.of("]")},
-                Style.EMPTY.withColor(Formatting.GRAY).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.empty())).withItalic(true),
+                GeneralUtils.emptyStyle().setColor(TextFormatting.GRAY).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, GeneralUtils.emptyText())).setItalic(true),
                 new ParentNode(textNodes), null, null);
 
     }
 
     public static TextNode defaultQuoteFormatting(TextNode[] textNodes) {
-        return new StyledNode(textNodes, Style.EMPTY.withColor(Formatting.GRAY).withItalic(true), null, null, null);
+        return new StyledNode(textNodes, GeneralUtils.emptyStyle().setColor(TextFormatting.GRAY).setItalic(true), null, null, null);
     }
 
     @Override
@@ -219,7 +218,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
                         out.add(new LiteralNode(builder.toString()));
                         builder = new StringBuilder();
                     }
-                    out.add(new FormattingNode(value, Formatting.STRIKETHROUGH));
+                    out.add(new FormattingNode(value, TextFormatting.STRIKETHROUGH));
                     continue;
                 }
             } else if (next.type == SubNodeType.STAR || next.type == SubNodeType.FLOOR) {
@@ -239,7 +238,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
                                     out.add(new LiteralNode(builder.toString()));
                                     builder = new StringBuilder();
                                 }
-                                out.add(new FormattingNode(value, next.type == SubNodeType.STAR ? Formatting.BOLD : Formatting.UNDERLINE));
+                                out.add(new FormattingNode(value, next.type == SubNodeType.STAR ? TextFormatting.BOLD : TextFormatting.UNDERLINE));
                                 continue;
                             }
                         }
@@ -255,7 +254,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
                             out.add(new LiteralNode(builder.toString()));
                             builder = new StringBuilder();
                         }
-                        out.add(new FormattingNode(value, Formatting.ITALIC));
+                        out.add(new FormattingNode(value, TextFormatting.ITALIC));
                         continue;
                     }
                 }

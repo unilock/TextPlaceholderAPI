@@ -1,23 +1,24 @@
 package eu.pb4.placeholders.api;
 
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import eu.pb4.placeholders.impl.GeneralUtils;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 
 public final class PlaceholderResult {
-    private final Text text;
+    private final ITextComponent text;
     private final String string;
     private final boolean valid;
 
-    private PlaceholderResult(Text text, String reason) {
+    private PlaceholderResult(ITextComponent text, String reason) {
         if (text != null) {
             this.text = text;
             this.valid = true;
         } else {
-            this.text = Text.literal("[" + (reason != null ? reason : "Invalid placeholder!") + "]").setStyle(Style.EMPTY.withColor(Formatting.GRAY).withItalic(true));
+            this.text = new TextComponentString("[" + (reason != null ? reason : "Invalid placeholder!") + "]").setStyle(GeneralUtils.emptyStyle().setColor(TextFormatting.GRAY).setItalic(true));
             this.valid = false;
         }
-        this.string = this.text.getString();
+        this.string = this.text.getUnformattedText();
     }
 
     /**
@@ -25,7 +26,7 @@ public final class PlaceholderResult {
      *
      * @return Text
      */
-    public Text text() {
+    public ITextComponent text() {
         return this.text;
     }
 
@@ -70,7 +71,7 @@ public final class PlaceholderResult {
      *
      * @return PlaceholderResult
      */
-    public static PlaceholderResult value(Text text) {
+    public static PlaceholderResult value(ITextComponent text) {
         return new PlaceholderResult(text, null);
     }
 

@@ -1,11 +1,11 @@
 package eu.pb4.placeholders.impl.placeholder.builtin;
 
-import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.PlaceholderResult;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.text.Text;
+import eu.pb4.placeholders.api.Placeholders;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.Loader;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -16,7 +16,7 @@ import java.util.Objects;
 
 public class ServerPlaceholders {
     public static void register() {
-        Placeholders.register(new Identifier("server", "tps"), (ctx, arg) -> {
+        Placeholders.register(new ResourceLocation("server", "tps"), (ctx, arg) -> {
             double tps = 1000f / Math.max(ctx.server().getTickTime(), 50);
             String format = "%.1f";
 
@@ -32,7 +32,7 @@ public class ServerPlaceholders {
             return PlaceholderResult.value(String.format(format, tps));
         });
 
-        Placeholders.register(new Identifier("server", "tps_colored"), (ctx, arg) -> {
+        Placeholders.register(new ResourceLocation("server", "tps_colored"), (ctx, arg) -> {
             double tps = 1000f / Math.max(ctx.server().getTickTime(), 50);
             String format = "%.1f";
 
@@ -44,60 +44,54 @@ public class ServerPlaceholders {
                     format = "%.1f";
                 }
             }
-            return PlaceholderResult.value(Text.literal(String.format(format, tps)).formatted(tps > 19 ? Formatting.GREEN : tps > 16 ? Formatting.GOLD : Formatting.RED));
+            return PlaceholderResult.value(new TextComponentString(String.format(format, tps)).formatted(tps > 19 ? Formatting.GREEN : tps > 16 ? Formatting.GOLD : Formatting.RED));
         });
 
-        Placeholders.register(new Identifier("server", "mspt"), (ctx, arg) -> PlaceholderResult.value(String.format("%.0f", ctx.server().getTickTime())));
+        Placeholders.register(new ResourceLocation("server", "mspt"), (ctx, arg) -> PlaceholderResult.value(String.format("%.0f", ctx.server().getTickTime())));
 
-        Placeholders.register(new Identifier("server", "mspt_colored"), (ctx, arg) -> {
+        Placeholders.register(new ResourceLocation("server", "mspt_colored"), (ctx, arg) -> {
             float x = ctx.server().getTickTime();
-            return PlaceholderResult.value(Text.literal(String.format("%.0f", x)).formatted(x < 45 ? Formatting.GREEN : x < 51 ? Formatting.GOLD : Formatting.RED));
+            return PlaceholderResult.value(new TextComponentString(String.format("%.0f", x)).formatted(x < 45 ? Formatting.GREEN : x < 51 ? Formatting.GOLD : Formatting.RED));
         });
 
 
-        Placeholders.register(new Identifier("server", "time"), (ctx, arg) -> {
+        Placeholders.register(new ResourceLocation("server", "time"), (ctx, arg) -> {
             SimpleDateFormat format = new SimpleDateFormat(arg != null ? arg : "HH:mm:ss");
             return PlaceholderResult.value(format.format(new Date(System.currentTimeMillis())));
         });
 
-        Placeholders.register(new Identifier("server", "version"), (ctx, arg) -> PlaceholderResult.value(ctx.server().getVersion()));
+        Placeholders.register(new ResourceLocation("server", "version"), (ctx, arg) -> PlaceholderResult.value(ctx.server().getVersion()));
 
-        Placeholders.register(new Identifier("server", "mod_version"), (ctx, arg) -> {
+        Placeholders.register(new ResourceLocation("server", "mod_version"), (ctx, arg) -> {
             if (arg != null) {
-                var container = FabricLoader.getInstance().getModContainer(arg);
+                var container = Loader.instance().getIndexedModList().get(arg);
 
-                if (container.isPresent()) {
-                    return PlaceholderResult.value(Text.literal(container.get().getMetadata().getVersion().getFriendlyString()));
-                }
+                return PlaceholderResult.value(new TextComponentString(container.getDisplayVersion()));
             }
             return PlaceholderResult.invalid("Invalid argument");
         });
 
-        Placeholders.register(new Identifier("server", "mod_name"), (ctx, arg) -> {
+        Placeholders.register(new ResourceLocation("server", "mod_name"), (ctx, arg) -> {
             if (arg != null) {
-                var container = FabricLoader.getInstance().getModContainer(arg);
+                var container = Loader.instance().getIndexedModList().get(arg);
 
-                if (container.isPresent()) {
-                    return PlaceholderResult.value(Text.literal(container.get().getMetadata().getName()));
-                }
+                return PlaceholderResult.value(new TextComponentString(container.getName()));
             }
             return PlaceholderResult.invalid("Invalid argument");
         });
 
-        Placeholders.register(new Identifier("server", "mod_description"), (ctx, arg) -> {
+        Placeholders.register(new ResourceLocation("server", "mod_description"), (ctx, arg) -> {
             if (arg != null) {
-                var container = FabricLoader.getInstance().getModContainer(arg);
+                var container = Loader.instance().getIndexedModList().get(arg);
 
-                if (container.isPresent()) {
-                    return PlaceholderResult.value(Text.literal(container.get().getMetadata().getDescription()));
-                }
+                return PlaceholderResult.value(new TextComponentString(container.getMetadata().description));
             }
             return PlaceholderResult.invalid("Invalid argument");
         });
 
-        Placeholders.register(new Identifier("server", "name"), (ctx, arg) -> PlaceholderResult.value(ctx.server().getName()));
+        Placeholders.register(new ResourceLocation("server", "name"), (ctx, arg) -> PlaceholderResult.value(ctx.server().getName()));
 
-        Placeholders.register(new Identifier("server", "used_ram"), (ctx, arg) -> {
+        Placeholders.register(new ResourceLocation("server", "used_ram"), (ctx, arg) -> {
             MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
             MemoryUsage heapUsage = memoryMXBean.getHeapMemoryUsage();
 
@@ -106,7 +100,7 @@ public class ServerPlaceholders {
                     : String.format("%d", heapUsage.getUsed() / 1048576));
             });
 
-        Placeholders.register(new Identifier("server", "max_ram"), (ctx, arg) -> {
+        Placeholders.register(new ResourceLocation("server", "max_ram"), (ctx, arg) -> {
                     MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
                     MemoryUsage heapUsage = memoryMXBean.getHeapMemoryUsage();
 
@@ -115,7 +109,7 @@ public class ServerPlaceholders {
                             : String.format("%d", heapUsage.getMax() / 1048576));
                 });
 
-        Placeholders.register(new Identifier("server", "online"), (ctx, arg) -> PlaceholderResult.value(String.valueOf(ctx.server().getPlayerManager().getCurrentPlayerCount())));
-        Placeholders.register(new Identifier("server", "max_players"), (ctx, arg) -> PlaceholderResult.value(String.valueOf(ctx.server().getPlayerManager().getMaxPlayerCount())));
+        Placeholders.register(new ResourceLocation("server", "online"), (ctx, arg) -> PlaceholderResult.value(String.valueOf(ctx.server().getCurrentPlayerCount())));
+        Placeholders.register(new ResourceLocation("server", "max_players"), (ctx, arg) -> PlaceholderResult.value(String.valueOf(ctx.server().getMaxPlayers())));
     }
 }

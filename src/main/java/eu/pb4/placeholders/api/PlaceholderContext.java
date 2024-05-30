@@ -1,23 +1,17 @@
 package eu.pb4.placeholders.api;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.CommandOutput;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
 
 public record PlaceholderContext(MinecraftServer server,
-                                 ServerCommandSource source,
-                                 @Nullable ServerWorld world,
-                                 @Nullable ServerPlayerEntity player,
+                                 Entity source,
+                                 @Nullable WorldServer world,
+                                 @Nullable EntityPlayerMP player,
                                  @Nullable Entity entity,
                                  @Nullable GameProfile gameProfile
 ) {
@@ -47,27 +41,23 @@ public record PlaceholderContext(MinecraftServer server,
     }
 
     public static PlaceholderContext of(MinecraftServer server) {
-        return new PlaceholderContext(server,  server.getCommandSource(), null, null, null, null);
+        return new PlaceholderContext(server,  server.getCommandSenderEntity(), null, null, null, null);
     }
 
+    // TODO: not sure about this one
     public static PlaceholderContext of(GameProfile profile, MinecraftServer server) {
-        var name = profile.getName() != null ? profile.getName() : profile.getId().toString();
-        return new PlaceholderContext(server, new ServerCommandSource(CommandOutput.DUMMY, Vec3d.ZERO, Vec2f.ZERO, server.getOverworld(), server.getPermissionLevel(profile), name, Text.literal(name), server, null), null, null, null, profile);
+        return new PlaceholderContext(server, server.getCommandSenderEntity(), null, null, null, profile);
     }
 
-    public static PlaceholderContext of(ServerPlayerEntity player) {
-        return new PlaceholderContext(player.getServer(), player.getCommandSource(), player.getWorld(), player, player, player.getGameProfile());
-    }
-
-    public static PlaceholderContext of(ServerCommandSource source) {
-        return new PlaceholderContext(source.getServer(), source, source.getWorld(), source.getPlayer(), source.getEntity(), source.getPlayer() != null ? source.getPlayer().getGameProfile() : null);
+    public static PlaceholderContext of(EntityPlayerMP player) {
+        return new PlaceholderContext(player.getServer(), player.getCommandSenderEntity(), player.getServerWorld(), player, player, player.getGameProfile());
     }
 
     public static PlaceholderContext of(Entity entity) {
-        if (entity instanceof ServerPlayerEntity player) {
+        if (entity instanceof EntityPlayerMP player) {
             return of(player);
         } else {
-            return new PlaceholderContext(entity.getServer(), entity.getCommandSource(), (ServerWorld) entity.getWorld(), null, entity, null);
+            return new PlaceholderContext(entity.getServer(), entity.getCommandSenderEntity(), (WorldServer) entity.getEntityWorld(), null, entity, null);
         }
     }
 }

@@ -1,6 +1,5 @@
 package eu.pb4.placeholders.api.parsers;
 
-import com.mojang.serialization.Codec;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.impl.textparser.MergedParser;
 
@@ -12,9 +11,9 @@ public interface NodeParser {
     TextNode[] parseNodes(TextNode input);
 
 
-    default Codec<WrappedText> codec() {
-        return Codec.STRING.xmap(x -> WrappedText.from(this, x), w -> w.input());
-    }
+//    default Codec<WrappedText> codec() {
+//        return Codec.STRING.xmap(x -> WrappedText.from(this, x), w -> w.input());
+//    }
 
     static NodeParser merge(NodeParser... parsers) {
         return switch (parsers.length) {

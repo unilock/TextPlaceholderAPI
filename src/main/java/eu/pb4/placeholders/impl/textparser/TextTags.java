@@ -1,23 +1,38 @@
 package eu.pb4.placeholders.impl.textparser;
 
-import com.google.common.util.concurrent.AtomicDouble;
-import eu.pb4.placeholders.api.node.*;
+import eu.pb4.placeholders.api.node.DirectTextNode;
+import eu.pb4.placeholders.api.node.KeybindNode;
+import eu.pb4.placeholders.api.node.LiteralNode;
+import eu.pb4.placeholders.api.node.ScoreNode;
+import eu.pb4.placeholders.api.node.TextNode;
+import eu.pb4.placeholders.api.node.TranslatedNode;
+import eu.pb4.placeholders.api.node.parent.ClickActionNode;
+import eu.pb4.placeholders.api.node.parent.ColorNode;
+import eu.pb4.placeholders.api.node.parent.FormattingNode;
+import eu.pb4.placeholders.api.node.parent.GradientNode;
+import eu.pb4.placeholders.api.node.parent.HoverNode;
+import eu.pb4.placeholders.api.node.parent.InsertNode;
+import eu.pb4.placeholders.api.node.parent.ParentNode;
 import eu.pb4.placeholders.api.parsers.TextParserV1;
-import eu.pb4.placeholders.api.node.parent.*;
 import eu.pb4.placeholders.impl.GeneralUtils;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextColor;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
 import static eu.pb4.placeholders.impl.textparser.TextParserImpl.*;
 
@@ -36,11 +51,11 @@ public final class TextTags {
             aliases.put("bold", List.of("b"));
             aliases.put("underline", List.of("underlined"));
 
-            for (Formatting formatting : Formatting.values()) {
+            for (TextFormatting formatting : TextFormatting.values()) {
                 TextParserV1.registerDefault(
                         TextParserV1.TextTag.of(
-                                formatting.getName(),
-                                aliases.containsKey(formatting.getName()) ? aliases.get(formatting.getName()) : List.of(),
+                                formatting.getFriendlyName(),
+                                aliases.containsKey(formatting.getFriendlyName()) ? aliases.get(formatting.getFriendlyName()) : List.of(),
                                 formatting.isColor() ? "color" : "formatting",
                                 true,
                                 (tag, data, input, handlers, endAt) -> {
@@ -65,19 +80,19 @@ public final class TextTags {
                     )
             );
         }
-        {
-            TextParserV1.registerDefault(
-                    TextParserV1.TextTag.of(
-                            "font",
-                            "other_formatting",
-                            false,
-                            (tag, data, input, handlers, endAt) -> {
-                                var out = recursiveParsing(input, handlers, endAt);
-                                return out.value(new FontNode(out.nodes(), Identifier.tryParse(cleanArgument(data))));
-                            }
-                    )
-            );
-        }
+//        {
+//            TextParserV1.registerDefault(
+//                    TextParserV1.TextTag.of(
+//                            "font",
+//                            "other_formatting",
+//                            false,
+//                            (tag, data, input, handlers, endAt) -> {
+//                                var out = recursiveParsing(input, handlers, endAt);
+//                                return out.value(new FontNode(out.nodes(), Identifier.tryParse(cleanArgument(data))));
+//                            }
+//                    )
+//            );
+//        }
 
         {
             TextParserV1.registerDefault(TextParserV1.TextTag.of(
@@ -122,7 +137,7 @@ public final class TextTags {
                 String[] lines = data.split(":", 2);
                 var out = recursiveParsing(input, handlers, endAt);
                 if (lines.length > 1) {
-                    ClickEvent.Action action = ClickEvent.Action.byName(cleanArgument(lines[0]));
+                    ClickEvent.Action action = ClickEvent.Action.getValueByCanonicalName(cleanArgument(lines[0]));
                     if (action != null) {
                         return out.value(new ClickActionNode(out.nodes(), action, new LiteralNode(restoreOriginalEscaping(cleanArgument(lines[1])))));
                     }
@@ -184,23 +199,23 @@ public final class TextTags {
             );
         }
 
-        {
-            TextParserV1.registerDefault(
-                    TextParserV1.TextTag.of(
-                            "copy_to_clipboard",
-                            List.of("copy"),
-                            "click_action",
-                            false,
-                            (tag, data, input, handlers, endAt) -> {
-                                var out = recursiveParsing(input, handlers, endAt);
-                                if (!data.isEmpty()) {
-                                    return out.value(new ClickActionNode(out.nodes(), ClickEvent.Action.COPY_TO_CLIPBOARD, new LiteralNode(restoreOriginalEscaping(cleanArgument(data)))));
-                                }
-                                return out.value(new ParentNode(out.nodes()));
-                            }
-                    )
-            );
-        }
+//        {
+//            TextParserV1.registerDefault(
+//                    TextParserV1.TextTag.of(
+//                            "copy_to_clipboard",
+//                            List.of("copy"),
+//                            "click_action",
+//                            false,
+//                            (tag, data, input, handlers, endAt) -> {
+//                                var out = recursiveParsing(input, handlers, endAt);
+//                                if (!data.isEmpty()) {
+//                                    return out.value(new ClickActionNode(out.nodes(), ClickEvent.Action.COPY_TO_CLIPBOARD, new LiteralNode(restoreOriginalEscaping(cleanArgument(data)))));
+//                                }
+//                                return out.value(new ParentNode(out.nodes()));
+//                            }
+//                    )
+//            );
+//        }
 
         {
             TextParserV1.registerDefault(
@@ -468,7 +483,7 @@ public final class TextTags {
                             "raw_style",
                             "special",
                             false,
-                            (tag, data, input, handlers, endAt) -> new TextParserV1.TagNodeValue(new DirectTextNode(Text.Serializer.fromLenientJson(restoreOriginalEscaping(cleanArgument(data)))), 0)
+                            (tag, data, input, handlers, endAt) -> new TextParserV1.TagNodeValue(new DirectTextNode(ITextComponent.Serializer.fromJsonLenient(restoreOriginalEscaping(cleanArgument(data)))), 0)
                     )
             );
         }

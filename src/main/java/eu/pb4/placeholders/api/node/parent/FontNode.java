@@ -1,26 +1,25 @@
 package eu.pb4.placeholders.api.node.parent;
 
-import eu.pb4.placeholders.api.ParserContext;
-import eu.pb4.placeholders.api.node.TextNode;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
-public final class FontNode extends ParentNode {
-    private final Identifier font;
-
-    public FontNode(TextNode[] children, Identifier font) {
-        super(children);
-        this.font = font;
-    }
-
-    @Override
-    protected Text applyFormatting(MutableText out, ParserContext context) {
-        return out.setStyle(out.getStyle().withFont(font));
-    }
-
-    @Override
-    public ParentTextNode copyWith(TextNode[] children) {
-        return new FontNode(children, this.font);
-    }
-}
+//import api.eu.pb4.placeholders.ParserContext;
+//import node.api.eu.pb4.placeholders.TextNode;
+//import net.minecraft.util.ResourceLocation;
+//import net.minecraft.util.text.ITextComponent;
+//
+//public final class FontNode extends ParentNode {
+//    private final ResourceLocation font;
+//
+//    public FontNode(TextNode[] children, ResourceLocation font) {
+//        super(children);
+//        this.font = font;
+//    }
+//
+//    @Override
+//    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) {
+//        return out.setStyle(out.getStyle().setFont(font));
+//    }
+//
+//    @Override
+//    public ParentTextNode copyWith(TextNode[] children) {
+//        return new FontNode(children, this.font);
+//    }
+//}
