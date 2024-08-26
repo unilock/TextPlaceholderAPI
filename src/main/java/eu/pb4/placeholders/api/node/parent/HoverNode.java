@@ -8,8 +8,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Text;
 import net.minecraft.util.text.event.HoverEvent;
-import javax.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public final class HoverNode<T, H> extends ParentNode {

@@ -1,18 +1,7 @@
 package eu.pb4.placeholders.impl.textparser;
 
-import eu.pb4.placeholders.api.node.DirectTextNode;
-import eu.pb4.placeholders.api.node.KeybindNode;
-import eu.pb4.placeholders.api.node.LiteralNode;
-import eu.pb4.placeholders.api.node.ScoreNode;
-import eu.pb4.placeholders.api.node.TextNode;
-import eu.pb4.placeholders.api.node.TranslatedNode;
-import eu.pb4.placeholders.api.node.parent.ClickActionNode;
-import eu.pb4.placeholders.api.node.parent.ColorNode;
-import eu.pb4.placeholders.api.node.parent.FormattingNode;
-import eu.pb4.placeholders.api.node.parent.GradientNode;
-import eu.pb4.placeholders.api.node.parent.HoverNode;
-import eu.pb4.placeholders.api.node.parent.InsertNode;
-import eu.pb4.placeholders.api.node.parent.ParentNode;
+import eu.pb4.placeholders.api.node.*;
+import eu.pb4.placeholders.api.node.parent.*;
 import eu.pb4.placeholders.api.parsers.TextParserV1;
 import eu.pb4.placeholders.impl.GeneralUtils;
 import net.minecraft.entity.EntityType;
@@ -27,12 +16,7 @@ import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static eu.pb4.placeholders.impl.textparser.TextParserImpl.*;
 

@@ -1,17 +1,13 @@
 package eu.pb4.placeholders.impl.textparser;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import eu.pb4.placeholders.api.node.LiteralNode;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.parsers.TextParserV1;
 import eu.pb4.placeholders.impl.GeneralUtils.Pair;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import io.netty.util.internal.UnstableApi;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentKeybind;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.*;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,25 +1,10 @@
 package eu.pb4.placeholders.impl;
 
-import eu.pb4.placeholders.api.node.KeybindNode;
-import eu.pb4.placeholders.api.node.LiteralNode;
-import eu.pb4.placeholders.api.node.ScoreNode;
-import eu.pb4.placeholders.api.node.TextNode;
-import eu.pb4.placeholders.api.node.TranslatedNode;
-import eu.pb4.placeholders.api.node.parent.ColorNode;
-import eu.pb4.placeholders.api.node.parent.FormattingNode;
-import eu.pb4.placeholders.api.node.parent.GradientNode;
-import eu.pb4.placeholders.api.node.parent.ParentNode;
-import eu.pb4.placeholders.api.node.parent.ParentTextNode;
-import eu.pb4.placeholders.api.node.parent.StyledNode;
+import com.github.bsideup.jabel.Desugar;
+import eu.pb4.placeholders.api.node.*;
+import eu.pb4.placeholders.api.node.parent.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentBase;
-import net.minecraft.util.text.TextComponentKeybind;
-import net.minecraft.util.text.TextComponentScore;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.HoverEvent;
 
 import java.util.ArrayList;
@@ -275,13 +260,16 @@ public class GeneralUtils {
         return emptyText().getStyle();
     }
 
+    @Desugar
     public record HSV(float h, float s, float v) {
     }
 
+    @Desugar
     public record TextLengthPair(ITextComponent text, int length) {
         public static final TextLengthPair EMPTY = new TextLengthPair(null, 0);
     }
 
+    @Desugar
     public record Pair<L, R>(L left, R right) {
     }
 }

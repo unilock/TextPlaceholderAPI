@@ -1,6 +1,7 @@
 package eu.pb4.placeholders.api.parsers;
 
 import com.github.bsideup.jabel.Desugar;
+import com.google.common.collect.ImmutableList;
 import eu.pb4.placeholders.api.node.EmptyNode;
 import eu.pb4.placeholders.api.node.LiteralNode;
 import eu.pb4.placeholders.api.node.TextNode;
@@ -8,9 +9,8 @@ import eu.pb4.placeholders.api.node.parent.ParentNode;
 import eu.pb4.placeholders.api.node.parent.ParentTextNode;
 import eu.pb4.placeholders.impl.textparser.TextParserImpl;
 import eu.pb4.placeholders.impl.textparser.TextTags;
-import com.google.common.collect.ImmutableList;
-import javax.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 

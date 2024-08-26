@@ -1,10 +1,12 @@
 package eu.pb4.placeholders.impl.textparser;
 
+import com.github.bsideup.jabel.Desugar;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.parsers.NodeParser;
 
 import java.util.Arrays;
 
+@Desugar
 public record MergedParser(NodeParser[] parsers) implements NodeParser {
     public MergedParser(NodeParser[] parsers) {
         this.parsers = Arrays.copyOf(parsers, parsers.length);

@@ -10,7 +10,6 @@ import eu.pb4.placeholders.api.node.parent.FormattingNode;
 import eu.pb4.placeholders.api.node.parent.ParentTextNode;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import net.minecraft.util.text.TextColor;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;

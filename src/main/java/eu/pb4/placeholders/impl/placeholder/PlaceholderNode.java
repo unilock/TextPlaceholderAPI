@@ -1,5 +1,6 @@
 package eu.pb4.placeholders.impl.placeholder;
 
+import com.github.bsideup.jabel.Desugar;
 import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.PlaceholderContext;
 import eu.pb4.placeholders.api.Placeholders;
@@ -9,6 +10,7 @@ import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
 
+@Desugar
 public record PlaceholderNode(String placeholder, Placeholders.PlaceholderGetter getter, boolean optionalContext, @Nullable String argument) implements TextNode {
     @Override
     public ITextComponent toText(ParserContext context, boolean removeSingleSlash) {

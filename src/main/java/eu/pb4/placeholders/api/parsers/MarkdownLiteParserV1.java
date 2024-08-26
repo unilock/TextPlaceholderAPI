@@ -1,6 +1,7 @@
 package eu.pb4.placeholders.api.parsers;
 
 import com.github.bsideup.jabel.Desugar;
+import com.mojang.brigadier.StringReader;
 import eu.pb4.placeholders.api.node.LiteralNode;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.node.TranslatedNode;
@@ -9,11 +10,10 @@ import eu.pb4.placeholders.api.node.parent.ParentNode;
 import eu.pb4.placeholders.api.node.parent.ParentTextNode;
 import eu.pb4.placeholders.api.node.parent.StyledNode;
 import eu.pb4.placeholders.impl.GeneralUtils;
-import com.mojang.brigadier.StringReader;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
-import javax.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.ListIterator;

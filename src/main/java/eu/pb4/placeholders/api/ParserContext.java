@@ -3,7 +3,6 @@ package eu.pb4.placeholders.api;
 import com.github.bsideup.jabel.Desugar;
 
 import javax.annotation.Nullable;
-
 import java.util.HashMap;
 import java.util.Map;
 
