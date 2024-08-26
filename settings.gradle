@@ -1,12 +1,25 @@
 pluginManagement {
     repositories {
         maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
+            // RetroFuturaGradle
+            name 'GTNH Maven'
+            url 'https://nexus.gtnewhorizons.com/repository/public/'
+            mavenContent {
+                includeGroup 'com.gtnewhorizons'
+                includeGroup 'com.gtnewhorizons.retrofuturagradle'
+            }
         }
         gradlePluginPortal()
+        mavenCentral()
+        mavenLocal()
     }
 }
 
-rootProject.name = 'placeholder-api'
+plugins {
+    // Automatic toolchain provisioning
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.4.0'
+}
 
+// Due to an IntelliJ bug, this has to be done
+// rootProject.name = archives_base_name
+rootProject.name = rootProject.projectDir.getName()
