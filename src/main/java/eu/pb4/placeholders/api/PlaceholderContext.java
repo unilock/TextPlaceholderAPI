@@ -1,5 +1,6 @@
 package eu.pb4.placeholders.api;
 
+import com.github.bsideup.jabel.Desugar;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -8,6 +9,7 @@ import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
 
+@Desugar
 public record PlaceholderContext(MinecraftServer server,
                                  Entity source,
                                  @Nullable WorldServer world,

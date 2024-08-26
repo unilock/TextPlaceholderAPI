@@ -1,9 +1,11 @@
 package eu.pb4.placeholders.api.node;
 
+import com.github.bsideup.jabel.Desugar;
 import eu.pb4.placeholders.api.ParserContext;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
+@Desugar
 public record TranslatedNode(String key, Object[] args) implements TextNode {
     public TranslatedNode(String key) {
         this(key, new Object[0]);

@@ -2,9 +2,10 @@ package eu.pb4.placeholders.impl.placeholder.builtin;
 
 import eu.pb4.placeholders.api.PlaceholderResult;
 import eu.pb4.placeholders.api.Placeholders;
-import net.minecraft.util.Formatting;
+import eu.pb4.placeholders.impl.GeneralUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
 
 import java.lang.management.ManagementFactory;
@@ -44,14 +45,14 @@ public class ServerPlaceholders {
                     format = "%.1f";
                 }
             }
-            return PlaceholderResult.value(new TextComponentString(String.format(format, tps)).formatted(tps > 19 ? Formatting.GREEN : tps > 16 ? Formatting.GOLD : Formatting.RED));
+            return PlaceholderResult.value(new TextComponentString(String.format(format, tps)).setStyle(GeneralUtils.emptyStyle().setColor(tps > 19 ? TextFormatting.GREEN : tps > 16 ? TextFormatting.GOLD : TextFormatting.RED)));
         });
 
         Placeholders.register(new ResourceLocation("server", "mspt"), (ctx, arg) -> PlaceholderResult.value(String.format("%.0f", ctx.server().getTickTime())));
 
         Placeholders.register(new ResourceLocation("server", "mspt_colored"), (ctx, arg) -> {
             float x = ctx.server().getTickTime();
-            return PlaceholderResult.value(new TextComponentString(String.format("%.0f", x)).formatted(x < 45 ? Formatting.GREEN : x < 51 ? Formatting.GOLD : Formatting.RED));
+            return PlaceholderResult.value(new TextComponentString(String.format("%.0f", x)).setStyle(GeneralUtils.emptyStyle().setColor(x < 45 ? TextFormatting.GREEN : x < 51 ? TextFormatting.GOLD : TextFormatting.RED)));
         });
 
 
@@ -60,7 +61,7 @@ public class ServerPlaceholders {
             return PlaceholderResult.value(format.format(new Date(System.currentTimeMillis())));
         });
 
-        Placeholders.register(new ResourceLocation("server", "version"), (ctx, arg) -> PlaceholderResult.value(ctx.server().getVersion()));
+        Placeholders.register(new ResourceLocation("server", "version"), (ctx, arg) -> PlaceholderResult.value(ctx.server().getMinecraftVersion()));
 
         Placeholders.register(new ResourceLocation("server", "mod_version"), (ctx, arg) -> {
             if (arg != null) {

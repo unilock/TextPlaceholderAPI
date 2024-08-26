@@ -1,5 +1,6 @@
 package eu.pb4.placeholders.api.node.parent;
 
+import com.github.bsideup.jabel.Desugar;
 import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.parsers.NodeParser;
@@ -7,7 +8,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Text;
 import net.minecraft.util.text.event.HoverEvent;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import java.util.UUID;
 
@@ -54,12 +55,14 @@ public final class HoverNode<T, H> extends ParentNode {
         return this.value;
     }
 
+    @Desugar
     public record Action<T, H>(HoverEvent.Action<H> vanillaType) {
         public static final Action<EntityNodeContent, HoverEvent.EntityContent> ENTITY = new Action<>(HoverEvent.Action.SHOW_ENTITY);
         public static final Action<HoverEvent.ItemStackContent, HoverEvent.ItemStackContent> ITEM_STACK = new Action<>(HoverEvent.Action.SHOW_ITEM);
         public static final Action<ParentTextNode, Text> TEXT = new Action<>(HoverEvent.Action.SHOW_TEXT);
     }
 
+    @Desugar
     public record EntityNodeContent(EntityType<?>entityType, UUID uuid, @Nullable TextNode name) {
         public HoverEvent.EntityContent toVanilla(ParserContext context) {
             return new HoverEvent.EntityContent(this.entityType, this.uuid, this.name != null ? this.name.toText(context, true) : null);

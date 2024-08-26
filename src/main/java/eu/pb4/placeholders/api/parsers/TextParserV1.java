@@ -1,5 +1,6 @@
 package eu.pb4.placeholders.api.parsers;
 
+import com.github.bsideup.jabel.Desugar;
 import eu.pb4.placeholders.api.node.EmptyNode;
 import eu.pb4.placeholders.api.node.LiteralNode;
 import eu.pb4.placeholders.api.node.TextNode;
@@ -8,12 +9,9 @@ import eu.pb4.placeholders.api.node.parent.ParentTextNode;
 import eu.pb4.placeholders.impl.textparser.TextParserImpl;
 import eu.pb4.placeholders.impl.textparser.TextTags;
 import com.google.common.collect.ImmutableList;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class TextParserV1 implements NodeParser {
@@ -110,13 +108,14 @@ public class TextParserV1 implements NodeParser {
         return o != null ? o.parser() : null;
     }
 
+    @Desugar
     public record TextTag(String name, String[] aliases, String type, boolean userSafe, TagNodeBuilder parser) {
         public static TextTag of(String name, String type, TagNodeBuilder parser) {
             return of(name, type, true, parser);
         }
 
         public static TextTag of(String name, String type, boolean userSafe, TagNodeBuilder parser) {
-            return of(name, List.of(), type, userSafe, parser);
+            return of(name, Collections.emptyList(), type, userSafe, parser);
         }
 
         public static TextTag of(String name, List<String> aliases, String type, boolean userSafe, TagNodeBuilder parser) {
@@ -124,10 +123,12 @@ public class TextParserV1 implements NodeParser {
         }
     }
 
+    @Desugar
     public record TagNodeValue(TextNode node, int length) {
         public static final TagNodeValue EMPTY = new TagNodeValue(EmptyNode.INSTANCE, 0);
     }
 
+    @Desugar
     public record NodeList(TextNode[] nodes, int length) {
         public static final NodeList EMPTY = new NodeList(new TextNode[0], 0);
 

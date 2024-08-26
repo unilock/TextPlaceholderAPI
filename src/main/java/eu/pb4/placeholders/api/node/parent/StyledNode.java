@@ -8,7 +8,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 
 public final class StyledNode extends ParentNode {

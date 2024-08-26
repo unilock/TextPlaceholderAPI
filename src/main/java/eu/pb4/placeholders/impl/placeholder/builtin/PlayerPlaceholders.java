@@ -131,7 +131,7 @@ public class PlayerPlaceholders {
 
         Placeholders.register(new ResourceLocation("player", "playtime"), (ctx, arg) -> {
             if (ctx.hasPlayer()) {
-                int x = ctx.player().getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME));
+                int x = ctx.player().getStatFile().readStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME));
                 return PlaceholderResult.value(arg != null
                         ? DurationFormatUtils.formatDuration((long) x * 50, arg, true)
                         : GeneralUtils.durationToString((long) x / 20)

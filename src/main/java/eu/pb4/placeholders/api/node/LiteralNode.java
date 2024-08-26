@@ -1,10 +1,12 @@
 package eu.pb4.placeholders.api.node;
 
+import com.github.bsideup.jabel.Desugar;
 import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.impl.textparser.TextParserImpl;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
+@Desugar
 public record LiteralNode(String value) implements TextNode {
 
     public LiteralNode(StringBuilder builder) {

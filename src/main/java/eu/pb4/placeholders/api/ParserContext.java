@@ -1,6 +1,8 @@
 package eu.pb4.placeholders.api;
 
-import org.jetbrains.annotations.Nullable;
+import com.github.bsideup.jabel.Desugar;
+
+import javax.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,7 @@ public final class ParserContext {
     };
 
 
+    @Desugar
     public record Key<T>(String key, Class<T> type) {
         public static final Key<Boolean> COMPACT_TEXT = new Key<>("compact_text", Boolean.class);
     };

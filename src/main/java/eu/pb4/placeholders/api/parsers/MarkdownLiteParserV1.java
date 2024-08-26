@@ -1,5 +1,6 @@
 package eu.pb4.placeholders.api.parsers;
 
+import com.github.bsideup.jabel.Desugar;
 import eu.pb4.placeholders.api.node.LiteralNode;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.node.TranslatedNode;
@@ -11,7 +12,7 @@ import eu.pb4.placeholders.impl.GeneralUtils;
 import com.mojang.brigadier.StringReader;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -136,7 +137,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
         }
 
 
-        if (!builder.isEmpty()) {
+        if (builder.length() != 0) {
             consumer.accept(new SubNode<>(SubNodeType.STRING, builder.toString()));
         }
     }
@@ -152,7 +153,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
                 int foundCount = 1;
 
                 if (foundCount == count) {
-                    if (!builder.isEmpty()) {
+                    if (builder.length() != 0) {
                         out.add(new LiteralNode(builder.toString()));
                     }
                     return out.toArray(new TextNode[0]);
@@ -163,7 +164,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
                 while (nodes.hasNext()) {
                     if (nodes.next().type == endAt) {
                         if ((++foundCount) == count) {
-                            if (!builder.isEmpty()) {
+                            if (builder.length() != 0) {
                                 out.add(new LiteralNode(builder.toString()));
                             }
                             return out.toArray(new TextNode[0]);
@@ -179,7 +180,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
             }
 
             if (next.type == SubNodeType.TEXT_NODE) {
-                if (!builder.isEmpty()) {
+                if (builder.length() != 0) {
                     out.add(new LiteralNode(builder.toString()));
                     builder = new StringBuilder();
                 }
@@ -192,7 +193,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
                 var value = parseSubNodes(nodes, next.type, 1);
 
                 if (value != null) {
-                    if (!builder.isEmpty()) {
+                    if (builder.length() != 0) {
                         out.add(new LiteralNode(builder.toString()));
                         builder = new StringBuilder();
                     }
@@ -203,7 +204,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
                 var value = parseSubNodes(nodes, next.type, 1);
 
                 if (value != null) {
-                    if (!builder.isEmpty()) {
+                    if (builder.length() != 0) {
                         out.add(new LiteralNode(builder.toString()));
                         builder = new StringBuilder();
                     }
@@ -214,7 +215,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
                 var value = parseSubNodes(nodes, next.type, 1);
 
                 if (value != null) {
-                    if (!builder.isEmpty()) {
+                    if (builder.length() != 0) {
                         out.add(new LiteralNode(builder.toString()));
                         builder = new StringBuilder();
                     }
@@ -234,7 +235,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
                             var value = parseSubNodes(nodes, next.type, 2);
 
                             if (value != null) {
-                                if (!builder.isEmpty()) {
+                                if (builder.length() != 0) {
                                     out.add(new LiteralNode(builder.toString()));
                                     builder = new StringBuilder();
                                 }
@@ -250,7 +251,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
                     var value = parseSubNodes(nodes, next.type, 1);
 
                     if (value != null) {
-                        if (!builder.isEmpty()) {
+                        if (builder.length() != 0) {
                             out.add(new LiteralNode(builder.toString()));
                             builder = new StringBuilder();
                         }
@@ -264,7 +265,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
         }
 
         if (endAt == null) {
-            if (!builder.isEmpty()) {
+            if (builder.length() != 0) {
                 out.add(new LiteralNode(builder.toString()));
             }
             return out.toArray(new TextNode[0]);
@@ -286,6 +287,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
         SPOILER
     }
 
+    @Desugar
     private record SubNodeType<T>(T selfValue) {
         public static final SubNodeType<TextNode> TEXT_NODE = new SubNodeType<>(null);
         public static final SubNodeType<String> STRING = new SubNodeType<>(null);
@@ -297,6 +299,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
         public static final SubNodeType<String> SPOILER_LINE = new SubNodeType<>("||");
     }
 
+    @Desugar
     private record SubNode<T>(SubNodeType<T> type, T value) {
     }
 

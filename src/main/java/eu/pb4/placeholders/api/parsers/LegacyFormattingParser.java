@@ -1,5 +1,6 @@
 package eu.pb4.placeholders.api.parsers;
 
+import com.google.common.collect.Lists;
 import com.mojang.brigadier.StringReader;
 import eu.pb4.placeholders.api.node.LiteralNode;
 import eu.pb4.placeholders.api.node.TextNode;
@@ -59,7 +60,7 @@ public class LegacyFormattingParser implements NodeParser {
         var list = new ArrayList<TextNode>();
 
         if (parentTextNode.getChildren().length > 0) {
-            var nodes = new ArrayList<>(List.of(parentTextNode.getChildren()));
+            var nodes = new ArrayList<>(Lists.newArrayList(parentTextNode.getChildren()));
             while (!nodes.isEmpty()) {
                 list.add(TextNode.asSingle(parseNodes(nodes.remove(0), nodes)));
             }
