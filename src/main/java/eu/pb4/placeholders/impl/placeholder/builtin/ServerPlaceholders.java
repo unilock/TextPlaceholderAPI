@@ -3,6 +3,7 @@ package eu.pb4.placeholders.impl.placeholder.builtin;
 import eu.pb4.placeholders.api.PlaceholderResult;
 import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.impl.GeneralUtils;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -18,7 +19,7 @@ import java.util.Objects;
 public class ServerPlaceholders {
     public static void register() {
         Placeholders.register(new ResourceLocation("server", "tps"), (ctx, arg) -> {
-            double tps = 1000f / Math.max(ctx.server().getTickTime(), 50);
+            double tps = 1000f / Math.max(getTickTime(ctx.server()), 50);
             String format = "%.1f";
 
             if (arg != null) {
@@ -34,7 +35,7 @@ public class ServerPlaceholders {
         });
 
         Placeholders.register(new ResourceLocation("server", "tps_colored"), (ctx, arg) -> {
-            double tps = 1000f / Math.max(ctx.server().getTickTime(), 50);
+            double tps = 1000f / Math.max(getTickTime(ctx.server()), 50);
             String format = "%.1f";
 
             if (arg != null) {
@@ -48,10 +49,10 @@ public class ServerPlaceholders {
             return PlaceholderResult.value(new TextComponentString(String.format(format, tps)).setStyle(GeneralUtils.emptyStyle().setColor(tps > 19 ? TextFormatting.GREEN : tps > 16 ? TextFormatting.GOLD : TextFormatting.RED)));
         });
 
-        Placeholders.register(new ResourceLocation("server", "mspt"), (ctx, arg) -> PlaceholderResult.value(String.format("%.0f", ctx.server().getTickTime())));
+        Placeholders.register(new ResourceLocation("server", "mspt"), (ctx, arg) -> PlaceholderResult.value(String.format("%.0f", getTickTime(ctx.server()))));
 
         Placeholders.register(new ResourceLocation("server", "mspt_colored"), (ctx, arg) -> {
-            float x = ctx.server().getTickTime();
+            float x = getTickTime(ctx.server());
             return PlaceholderResult.value(new TextComponentString(String.format("%.0f", x)).setStyle(GeneralUtils.emptyStyle().setColor(x < 45 ? TextFormatting.GREEN : x < 51 ? TextFormatting.GOLD : TextFormatting.RED)));
         });
 
@@ -112,5 +113,14 @@ public class ServerPlaceholders {
 
         Placeholders.register(new ResourceLocation("server", "online"), (ctx, arg) -> PlaceholderResult.value(String.valueOf(ctx.server().getCurrentPlayerCount())));
         Placeholders.register(new ResourceLocation("server", "max_players"), (ctx, arg) -> PlaceholderResult.value(String.valueOf(ctx.server().getMaxPlayers())));
+    }
+
+    private static float getTickTime(MinecraftServer server) {
+        final long[] tickTimeArray = server.tickTimeArray;
+        long sum = 0L;
+        for (long v : tickTimeArray) {
+            sum += v;
+        }
+        return (float) sum / tickTimeArray.length * 1.0E-6F;
     }
 }

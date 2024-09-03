@@ -2,11 +2,11 @@ package eu.pb4.placeholders.impl.placeholder.builtin;
 
 import eu.pb4.placeholders.api.PlaceholderResult;
 import eu.pb4.placeholders.api.Placeholders;
-import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.WorldServer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class WorldPlaceholders {
@@ -54,35 +54,35 @@ public class WorldPlaceholders {
             return PlaceholderResult.value("" + world.getTotalWorldTime() / 24000);
         });
 
-//        Placeholders.register(new ResourceLocation("world", "id"), (ctx, arg) -> {
-//            WorldServer world;
-//            if (ctx.player() != null) {
-//                world = ctx.player().getServerWorld();
-//            } else {
-//                world = (WorldServer) ctx.server().getEntityWorld();
-//            }
-//
-//            return PlaceholderResult.value(world.getRegistryKey().getValue().toString());
-//        });
-//
-//        Placeholders.register(new ResourceLocation("world", "name"), (ctx, arg) -> {
-//            WorldServer world;
-//            if (ctx.player() != null) {
-//                world = ctx.player().getServerWorld();
-//            } else {
-//                world = (WorldServer) ctx.server().getEntityWorld();
-//            }
-//            List<String> parts = new ArrayList<>();
-//            {
-//                String[] words = world.getRegistryKey().getValue().getPath().split("_");
-//                for (String word : words) {
-//                    String[] s = word.split("", 2);
-//                    s[0] = s[0].toUpperCase(Locale.ROOT);
-//                    parts.add(String.join("", s));
-//                }
-//            }
-//            return PlaceholderResult.value(String.join(" ", parts));
-//        });
+        Placeholders.register(new ResourceLocation("world", "id"), (ctx, arg) -> {
+            WorldServer world;
+            if (ctx.player() != null) {
+                world = ctx.player().getServerWorld();
+            } else {
+                world = (WorldServer) ctx.server().getEntityWorld();
+            }
+
+            return PlaceholderResult.value(world.getWorldInfo().getWorldName());
+        });
+
+        Placeholders.register(new ResourceLocation("world", "name"), (ctx, arg) -> {
+            WorldServer world;
+            if (ctx.player() != null) {
+                world = ctx.player().getServerWorld();
+            } else {
+                world = (WorldServer) ctx.server().getEntityWorld();
+            }
+            List<String> parts = new ArrayList<>();
+            {
+                String[] words = world.getWorldInfo().getWorldName().split("_");
+                for (String word : words) {
+                    String[] s = word.split("", 2);
+                    s[0] = s[0].toUpperCase(Locale.ROOT);
+                    parts.add(String.join("", s));
+                }
+            }
+            return PlaceholderResult.value(String.join(" ", parts));
+        });
 
 
 
@@ -105,50 +105,35 @@ public class WorldPlaceholders {
                 world = (WorldServer) ctx.server().getEntityWorld();
             }
 
-            SpawnHelper.Info info = world.getChunkManager().getSpawnInfo();
-
-            SpawnGroup spawnGroup = null;
-            if (arg != null) {
-                spawnGroup = SpawnGroup.valueOf(arg.toUpperCase(Locale.ROOT));
-            }
-
-            if (spawnGroup != null) {
-                return PlaceholderResult.value("" + info.getGroupToCount().getInt(spawnGroup));
-            } else {
-                int x = 0;
-
-                for (int value : info.getGroupToCount().values()) {
-                    x += value;
-                }
-                return PlaceholderResult.value("" + x);
-            }
+            // Cannot figure out the SpawnGroup stuff on 1.12.2...
+            return PlaceholderResult.value("" + world.loadedEntityList.size());
         });
 
-        Placeholders.register(new ResourceLocation("world", "mob_cap"), (ctx, arg) -> {
-            WorldServer world;
-            if (ctx.player() != null) {
-                world = ctx.player().getServerWorld();
-            } else {
-                world = (WorldServer) ctx.server().getEntityWorld();
-            }
-
-            SpawnHelper.Info info = world.getChunkManager().getSpawnInfo();
-
-            SpawnGroup spawnGroup = null;
-            if (arg != null) {
-                spawnGroup = SpawnGroup.valueOf(arg.toUpperCase(Locale.ROOT));
-            }
-
-            if (spawnGroup != null) {
-                return PlaceholderResult.value("" + spawnGroup.getCapacity() * info.getSpawningChunkCount() / CHUNK_AREA);
-            } else {
-                int x = 0;
-
-                for (SpawnGroup group : SpawnGroup.values()) {
-                    x += group.getCapacity();
-                }
-                return PlaceholderResult.value("" + x * info.getSpawningChunkCount() / CHUNK_AREA);
-            }
-        });
+//        Placeholders.register(new ResourceLocation("world", "mob_cap"), (ctx, arg) -> {
+//            WorldServer world;
+//            if (ctx.player() != null) {
+//                world = ctx.player().getServerWorld();
+//            } else {
+//                world = (WorldServer) ctx.server().getEntityWorld();
+//            }
+//
+//            SpawnHelper.Info info = world.getChunkManager().getSpawnInfo();
+//
+//            SpawnGroup spawnGroup = null;
+//            if (arg != null) {
+//                spawnGroup = SpawnGroup.valueOf(arg.toUpperCase(Locale.ROOT));
+//            }
+//
+//            if (spawnGroup != null) {
+//                return PlaceholderResult.value("" + spawnGroup.getCapacity() * info.getSpawningChunkCount() / CHUNK_AREA);
+//            } else {
+//                int x = 0;
+//
+//                for (SpawnGroup group : SpawnGroup.values()) {
+//                    x += group.getCapacity();
+//                }
+//                return PlaceholderResult.value("" + x * info.getSpawningChunkCount() / CHUNK_AREA);
+//            }
+//        });
     }
 }

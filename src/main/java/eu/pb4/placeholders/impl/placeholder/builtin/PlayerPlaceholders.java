@@ -4,9 +4,9 @@ import eu.pb4.placeholders.api.PlaceholderResult;
 import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.impl.GeneralUtils;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.stat.Stats;
+import net.minecraft.stats.StatBase;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -131,7 +131,7 @@ public class PlayerPlaceholders {
 
         Placeholders.register(new ResourceLocation("player", "playtime"), (ctx, arg) -> {
             if (ctx.hasPlayer()) {
-                int x = ctx.player().getStatFile().readStat(Stats.CUSTOM.getOrCreateStat(Stats.PLAY_TIME));
+                int x = ctx.player().getStatFile().readStat(StatList.PLAY_ONE_MINUTE) * 60;
                 return PlaceholderResult.value(arg != null
                         ? DurationFormatUtils.formatDuration((long) x * 50, arg, true)
                         : GeneralUtils.durationToString((long) x / 20)
@@ -144,10 +144,11 @@ public class PlayerPlaceholders {
         Placeholders.register(new ResourceLocation("player", "statistic"), (ctx, arg) -> {
             if (ctx.hasPlayer() && arg != null) {
                 try {
-                    ResourceLocation identifier = new ResourceLocation(arg);
-                    if (identifier != null) {
-                        int x = ctx.player().getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Registry.CUSTOM_STAT.get(identifier)));
-                        return PlaceholderResult.value(String.valueOf(x));
+                    for (StatBase stat : StatList.ALL_STATS) {
+                        if (arg.equals(stat.statId)) {
+                            int x = ctx.player().getStatFile().readStat(stat);
+                            return PlaceholderResult.value(String.valueOf(x));
+                        }
                     }
                 } catch (Exception e) {
                     /* Into the void you go! */
