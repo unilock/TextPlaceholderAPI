@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 
 public class GeneralUtils {
+    public static final int[] COLOR_CODES = new int[] { 0, 170, 43520, 43690, 11141120, 11141290, 16755200, 11184810, 5592405, 5592575, 5635925, 5636095, 16733525, 16733695, 16777045, 16777215 };
+
     public static String durationToString(long x) {
         long seconds = x % 60;
         long minutes = (x / 60) % 60;
@@ -126,6 +128,10 @@ public class GeneralUtils {
         }
 
         return new HSV(h, s, cmax);
+    }
+
+    public static int textColorToRgb(TextFormatting textColor) {
+        return COLOR_CODES[textColor.getColorIndex()];
     }
 
     public static ITextComponent removeHoverAndClick(ITextComponent input) {

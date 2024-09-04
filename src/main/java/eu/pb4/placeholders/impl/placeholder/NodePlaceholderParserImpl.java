@@ -71,7 +71,7 @@ public class NodePlaceholderParserImpl {
                 out.add(new ParentNode(recursivePlaceholderParsing(text1, pattern, placeholders, parser)));
             }
 
-            if (text instanceof HoverNode<?,?> hoverNode && hoverNode.action() == HoverNode.Action.TEXT) {
+            if (text instanceof HoverNode<?> hoverNode && hoverNode.action() == HoverNode.Action.TEXT) {
                 return new TextNode[] { new HoverNode<>(out.toArray(new TextNode[0]), HoverNode.Action.TEXT, (ParentNode) recursivePlaceholderParsing((TextNode) hoverNode.value(), pattern, placeholders, parser)[0]) };
             } else if (text instanceof ClickActionNode clickActionNode) {
                 return new TextNode[] { new ClickActionNode(out.toArray(new TextNode[0]), clickActionNode.action(), TextNode.asSingle(recursivePlaceholderParsing(clickActionNode.value(), pattern, placeholders, parser))) };

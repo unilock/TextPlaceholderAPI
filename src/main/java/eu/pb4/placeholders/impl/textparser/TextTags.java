@@ -4,23 +4,21 @@ import eu.pb4.placeholders.api.node.*;
 import eu.pb4.placeholders.api.node.parent.*;
 import eu.pb4.placeholders.api.parsers.TextParserV1;
 import eu.pb4.placeholders.impl.GeneralUtils;
-import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.util.Formatting;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextColor;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
-import org.jetbrains.annotations.ApiStatus;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.*;
 
 import static eu.pb4.placeholders.impl.textparser.TextParserImpl.*;
 
-@ApiStatus.Internal
+//@ApiStatus.Internal
 public final class TextTags {
     public static void register() {
         {
@@ -59,7 +57,7 @@ public final class TextTags {
                             true,
                             (tag, data, input, handlers, endAt) -> {
                                 var out = recursiveParsing(input, handlers, endAt);
-                                return new TextParserV1.TagNodeValue(new ColorNode(out.nodes(), TextColor.parse(cleanArgument(data))), out.length());
+                                return new TextParserV1.TagNodeValue(new ColorNode(out.nodes(), TextFormatting.getValueByName(cleanArgument(data))), out.length());
                             }
                     )
             );
@@ -228,7 +226,7 @@ public final class TextTags {
 
                                 try {
                                     if (lines.length > 1) {
-                                        HoverEvent.Action<?> action = HoverEvent.Action.byName(cleanArgument(lines[0].toLowerCase(Locale.ROOT)));
+                                        HoverEvent.Action action = HoverEvent.Action.getValueByCanonicalName(cleanArgument(lines[0].toLowerCase(Locale.ROOT)));
 
                                         if (action == HoverEvent.Action.SHOW_TEXT) {
                                             return out.value(new HoverNode<>(out.nodes(), HoverNode.Action.TEXT, new ParentNode(parse(restoreOriginalEscaping(cleanArgument(lines[1])), handlers))));
@@ -237,16 +235,13 @@ public final class TextTags {
                                             if (lines.length == 3) {
                                                 return out.value(new HoverNode<>(out.nodes(),
                                                         HoverNode.Action.ENTITY,
-                                                        new HoverNode.EntityNodeContent(
-                                                                EntityType.get(restoreOriginalEscaping(restoreOriginalEscaping(cleanArgument(lines[0])))).orElse(EntityType.PIG),
-                                                                UUID.fromString(cleanArgument(lines[1])),
-                                                                new ParentNode(parse(restoreOriginalEscaping(restoreOriginalEscaping(cleanArgument(lines[2]))), handlers)))
+                                                        new HoverNode.EntityNodeContent(Optional.ofNullable(ForgeRegistries.ENTITIES.getValue(new ResourceLocation(restoreOriginalEscaping(restoreOriginalEscaping(cleanArgument(lines[0])))))).orElse(ForgeRegistries.ENTITIES.getValue(new ResourceLocation("pig"))))
                                                 ));
                                             }
                                         } else if (action == HoverEvent.Action.SHOW_ITEM) {
                                             return out.value(new HoverNode<>(out.nodes(),
                                                     HoverNode.Action.ITEM_STACK,
-                                                    new HoverEvent.ItemStackContent(ItemStack.fromNbt(StringNbtReader.parse(restoreOriginalEscaping(cleanArgument(lines[1])))))
+                                                    new HoverNode.ItemStackNodeContent(new ItemStack(JsonToNBT.getTagFromJson(restoreOriginalEscaping(cleanArgument(lines[1])))))
                                             ));
                                         } else {
                                             return out.value(new HoverNode<>(out.nodes(), HoverNode.Action.TEXT, new ParentNode(parse(restoreOriginalEscaping(cleanArgument(data)), handlers))));
@@ -341,11 +336,13 @@ public final class TextTags {
                                 final float finalSaturation = saturation;
                                 final int finalOverriddenLength = overriddenLength;
 
-                                return out.value(new GradientNode(out.nodes(), finalOverriddenLength < 0
-                                        ? (pos, length) -> TextColor.fromRgb(GeneralUtils.hvsToRgb((((pos * finalFreq) + (finalFreqLength * length)) / (length + 1) + finalOffset) % 1, finalSaturation, 1))
-                                        : (pos, length) -> TextColor.fromRgb(GeneralUtils.hvsToRgb((((pos * finalFreq) + (finalFreqLength * length)) / (finalOverriddenLength + 1) + finalOffset) % 1, finalSaturation, 1))
-
-                                ));
+                                // TODO
+//                                return out.value(new GradientNode(out.nodes(), finalOverriddenLength < 0
+//                                        ? (pos, length) -> TextColor.fromRgb(GeneralUtils.hvsToRgb((((pos * finalFreq) + (finalFreqLength * length)) / (length + 1) + finalOffset) % 1, finalSaturation, 1))
+//                                        : (pos, length) -> TextColor.fromRgb(GeneralUtils.hvsToRgb((((pos * finalFreq) + (finalFreqLength * length)) / (finalOverriddenLength + 1) + finalOffset) % 1, finalSaturation, 1))
+//
+//                                ));
+                                return out.value(new GradientNode(out.nodes(), (pos, length) -> TextFormatting.WHITE));
                             }
                     )
             );
@@ -363,21 +360,21 @@ public final class TextTags {
 
                                 var out = recursiveParsing(input, handlers, endAt);
                                 //String flatString = GeneralUtils.textToString(out.text());
-                                List<TextColor> textColors = new ArrayList<>();
+                                List<TextFormatting> textColors = new ArrayList<>();
                                 for (String string : val) {
-                                    TextColor color = TextColor.parse(string);
+                                    TextFormatting color = TextFormatting.getValueByName(string);
                                     if (color != null) {
                                         textColors.add(color);
                                     }
                                 }
                                 if (textColors.size() == 0) {
-                                    textColors.add(TextColor.fromFormatting(Formatting.WHITE));
-                                    textColors.add(TextColor.fromFormatting(Formatting.WHITE));
+                                    textColors.add(TextFormatting.WHITE);
+                                    textColors.add(TextFormatting.WHITE);
                                 } else if (textColors.size() == 1) {
                                     textColors.add(textColors.get(0));
                                 }
 
-                                GeneralUtils.HSV hsv = GeneralUtils.rgbToHsv(textColors.get(0).getRgb());
+                                GeneralUtils.HSV hsv = GeneralUtils.rgbToHsv(GeneralUtils.textColorToRgb(textColors.get(0)));
 
                                 final int colorSize = textColors.size();
 
@@ -386,8 +383,8 @@ public final class TextTags {
                                     final float sectionSize = ((float) length) / (colorSize - 1);
                                     final float progress = (pos % sectionSize) / sectionSize;
 
-                                    GeneralUtils.HSV colorA = GeneralUtils.rgbToHsv(textColors.get(Math.min((int) (pos / sectionSize), colorSize - 1)).getRgb());
-                                    GeneralUtils.HSV colorB = GeneralUtils.rgbToHsv(textColors.get(Math.min((int) (pos / sectionSize) + 1, colorSize - 1)).getRgb());
+                                    GeneralUtils.HSV colorA = GeneralUtils.rgbToHsv(GeneralUtils.textColorToRgb(textColors.get(Math.min((int) (pos / sectionSize), colorSize - 1))));
+                                    GeneralUtils.HSV colorB = GeneralUtils.rgbToHsv(GeneralUtils.textColorToRgb(textColors.get(Math.min((int) (pos / sectionSize) + 1, colorSize - 1))));
 
                                     float hue;
                                     {
@@ -407,10 +404,12 @@ public final class TextTags {
 
                                     float value = MathHelper.clamp(colorB.v() * progress + colorA.v() * (1 - progress), 0, 1);
 
-                                    return TextColor.fromRgb(GeneralUtils.hvsToRgb(
-                                            MathHelper.clamp(hue, 0, 1),
-                                            sat,
-                                            value));
+                                    // TODO
+//                                    return TextColor.fromRgb(GeneralUtils.hvsToRgb(
+//                                            MathHelper.clamp(hue, 0, 1),
+//                                            sat,
+//                                            value));
+                                    return TextFormatting.WHITE;
                                 }));
                             }
                     )
@@ -429,18 +428,18 @@ public final class TextTags {
 
                                 var out = recursiveParsing(input, handlers, endAt);
 
-                                var textColors = new ArrayList<TextColor>();
+                                var textColors = new ArrayList<TextFormatting>();
 
                                 for (String string : val) {
-                                    TextColor color = TextColor.parse(string);
+                                    TextFormatting color = TextFormatting.getValueByName(string);
                                     if (color != null) {
                                         textColors.add(color);
                                     }
                                 }
 
                                 if (textColors.size() == 0) {
-                                    textColors.add(TextColor.fromFormatting(Formatting.WHITE));
-                                    textColors.add(TextColor.fromFormatting(Formatting.WHITE));
+                                    textColors.add(TextFormatting.WHITE);
+                                    textColors.add(TextFormatting.WHITE);
                                 } else if (textColors.size() == 1) {
                                     textColors.add(textColors.get(0));
                                 }

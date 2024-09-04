@@ -104,7 +104,8 @@ public class LegacyFormattingParser implements NodeParser {
 
                         return new TextNode[] {
                                 new LiteralNode(builder.toString()),
-                                new ColorNode(list.toArray(new TextNode[0]), TextColor.fromRgb(rgb))
+                                // TODO: new ColorNode(list.toArray(new TextNode[0]), TextColor.fromRgb(rgb))
+                                new ColorNode(list.toArray(new TextNode[0]), TextFormatting.WHITE)
                         };
                     } catch (Throwable e) {
                         //noop
