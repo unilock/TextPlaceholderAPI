@@ -126,7 +126,7 @@ public final class MarkdownLiteParserV1 implements NodeParser {
             }
 
             if (type != null) {
-                if (!builder.isEmpty()) {
+                if (builder.length() == 0) {
                     consumer.accept(new SubNode<>(SubNodeType.STRING, builder.toString()));
                     builder = new StringBuilder();
                 }

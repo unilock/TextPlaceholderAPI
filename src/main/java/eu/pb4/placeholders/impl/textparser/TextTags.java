@@ -1,5 +1,6 @@
 package eu.pb4.placeholders.impl.textparser;
 
+import com.google.common.collect.Lists;
 import eu.pb4.placeholders.api.node.*;
 import eu.pb4.placeholders.api.node.parent.*;
 import eu.pb4.placeholders.api.parsers.TextParserV1;
@@ -23,21 +24,21 @@ public final class TextTags {
     public static void register() {
         {
             Map<String, List<String>> aliases = new HashMap<>();
-            aliases.put("gold", List.of("orange"));
-            aliases.put("gray", List.of("grey"));
-            aliases.put("light_purple", List.of("pink"));
-            aliases.put("dark_gray", List.of("dark_grey"));
-            aliases.put("strikethrough", List.of("st"));
-            aliases.put("obfuscated", List.of("obf"));
-            aliases.put("italic", List.of("i"));
-            aliases.put("bold", List.of("b"));
-            aliases.put("underline", List.of("underlined"));
+            aliases.put("gold", Lists.newArrayList("orange"));
+            aliases.put("gray", Lists.newArrayList("grey"));
+            aliases.put("light_purple", Lists.newArrayList("pink"));
+            aliases.put("dark_gray", Lists.newArrayList("dark_grey"));
+            aliases.put("strikethrough", Lists.newArrayList("st"));
+            aliases.put("obfuscated", Lists.newArrayList("obf"));
+            aliases.put("italic", Lists.newArrayList("i"));
+            aliases.put("bold", Lists.newArrayList("b"));
+            aliases.put("underline", Lists.newArrayList("underlined"));
 
             for (TextFormatting formatting : TextFormatting.values()) {
                 TextParserV1.registerDefault(
                         TextParserV1.TextTag.of(
                                 formatting.getFriendlyName(),
-                                aliases.containsKey(formatting.getFriendlyName()) ? aliases.get(formatting.getFriendlyName()) : List.of(),
+                                aliases.containsKey(formatting.getFriendlyName()) ? aliases.get(formatting.getFriendlyName()) : new ArrayList<>(),
                                 formatting.isColor() ? "color" : "formatting",
                                 true,
                                 (tag, data, input, handlers, endAt) -> {
@@ -52,7 +53,7 @@ public final class TextTags {
             TextParserV1.registerDefault(
                     TextParserV1.TextTag.of(
                             "color",
-                            List.of("colour", "c"),
+                            Lists.newArrayList("colour", "c"),
                             "color",
                             true,
                             (tag, data, input, handlers, endAt) -> {
@@ -79,7 +80,7 @@ public final class TextTags {
         {
             TextParserV1.registerDefault(TextParserV1.TextTag.of(
                     "lang",
-                    List.of("translate"),
+                    Lists.newArrayList("translate"),
                     "special",
                     false,
                     (tag, data, input, handlers, endAt) -> {
@@ -132,7 +133,7 @@ public final class TextTags {
             TextParserV1.registerDefault(
                     TextParserV1.TextTag.of(
                             "run_command",
-                            List.of("run_cmd"),
+                            Lists.newArrayList("run_cmd"),
                             "click_action",
                             false,
                             (tag, data, input, handlers, endAt) -> {
@@ -150,7 +151,7 @@ public final class TextTags {
             TextParserV1.registerDefault(
                     TextParserV1.TextTag.of(
                             "suggest_command",
-                            List.of("cmd"),
+                            Lists.newArrayList("cmd"),
                             "click_action",
                             false,
                             (tag, data, input, handlers, endAt) -> {
@@ -168,7 +169,7 @@ public final class TextTags {
             TextParserV1.registerDefault(
                     TextParserV1.TextTag.of(
                             "open_url",
-                            List.of("url"),
+                            Lists.newArrayList("url"),
                             "click_action",
                             false, (tag, data, input, handlers, endAt) -> {
                                 var out = recursiveParsing(input, handlers, endAt);
@@ -185,7 +186,7 @@ public final class TextTags {
 //            TextParserV1.registerDefault(
 //                    TextParserV1.TextTag.of(
 //                            "copy_to_clipboard",
-//                            List.of("copy"),
+//                            Lists.newArrayList("copy"),
 //                            "click_action",
 //                            false,
 //                            (tag, data, input, handlers, endAt) -> {
@@ -203,7 +204,7 @@ public final class TextTags {
             TextParserV1.registerDefault(
                     TextParserV1.TextTag.of(
                             "change_page",
-                            List.of("page"),
+                            Lists.newArrayList("page"),
                             "click_action",
                             true, (tag, data, input, handlers, endAt) -> {
                                 var out = recursiveParsing(input, handlers, endAt);
@@ -273,7 +274,7 @@ public final class TextTags {
             TextParserV1.registerDefault(
                     TextParserV1.TextTag.of(
                             "clear_color",
-                            List.of("uncolor", "colorless"),
+                            Lists.newArrayList("uncolor", "colorless"),
                             "special",
                             false,
 
@@ -288,7 +289,7 @@ public final class TextTags {
             TextParserV1.registerDefault(
                     TextParserV1.TextTag.of(
                             "rainbow",
-                            List.of("rb"),
+                            Lists.newArrayList("rb"),
                             "gradient",
                             true,
                             (tag, data, input, handlers, endAt) -> {
@@ -350,7 +351,7 @@ public final class TextTags {
             TextParserV1.registerDefault(
                     TextParserV1.TextTag.of(
                             "gradient",
-                            List.of("gr"),
+                            Lists.newArrayList("gr"),
                             "gradient",
                             true,
                             (tag, data, input, handlers, endAt) -> {
@@ -416,7 +417,7 @@ public final class TextTags {
             TextParserV1.registerDefault(
                     TextParserV1.TextTag.of(
                             "hard_gradient",
-                            List.of("hgr"),
+                            Lists.newArrayList("hgr"),
                             "gradient",
                             true,
                             (tag, data, input, handlers, endAt) -> {
