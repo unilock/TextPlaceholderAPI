@@ -1,6 +1,7 @@
 package eu.pb4.placeholders.impl;
 
 import com.github.bsideup.jabel.Desugar;
+import com.google.common.collect.ImmutableList;
 import eu.pb4.placeholders.api.node.*;
 import eu.pb4.placeholders.api.node.parent.*;
 import net.minecraft.item.ItemStack;
@@ -8,10 +9,12 @@ import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.HoverEvent;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 
 public class GeneralUtils {
-    public static final int[] COLOR_CODES = new int[] { 0, 170, 43520, 43690, 11141120, 11141290, 16755200, 11184810, 5592405, 5592575, 5635925, 5636095, 16733525, 16733695, 16777045, 16777215 };
+    public static final List<Integer> COLOR_CODES = ImmutableList.of(0, 170, 43520, 43690, 11141120, 11141290, 16755200, 11184810, 5592405, 5592575, 5635925, 5636095, 16733525, 16733695, 16777045, 16777215);
 
     public static String durationToString(long x) {
         long seconds = x % 60;
@@ -131,7 +134,11 @@ public class GeneralUtils {
     }
 
     public static int textColorToRgb(TextFormatting textColor) {
-        return COLOR_CODES[textColor.getColorIndex()];
+        return COLOR_CODES.get(textColor.getColorIndex());
+    }
+
+    public static TextFormatting rgbToTextColor(int rgb) {
+        return TextFormatting.fromColorIndex(COLOR_CODES.indexOf(COLOR_CODES.stream().min(Comparator.comparingInt(i -> Math.abs(i - rgb))).orElse(0)));
     }
 
     public static ITextComponent removeHoverAndClick(ITextComponent input) {

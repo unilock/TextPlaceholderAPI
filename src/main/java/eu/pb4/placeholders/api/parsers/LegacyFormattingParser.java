@@ -8,8 +8,8 @@ import eu.pb4.placeholders.api.node.TranslatedNode;
 import eu.pb4.placeholders.api.node.parent.ColorNode;
 import eu.pb4.placeholders.api.node.parent.FormattingNode;
 import eu.pb4.placeholders.api.node.parent.ParentTextNode;
+import eu.pb4.placeholders.impl.GeneralUtils;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
-import net.minecraft.util.text.TextColor;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
@@ -104,8 +104,7 @@ public class LegacyFormattingParser implements NodeParser {
 
                         return new TextNode[] {
                                 new LiteralNode(builder.toString()),
-                                // TODO: new ColorNode(list.toArray(new TextNode[0]), TextColor.fromRgb(rgb))
-                                new ColorNode(list.toArray(new TextNode[0]), TextFormatting.WHITE)
+                                new ColorNode(list.toArray(new TextNode[0]), GeneralUtils.rgbToTextColor(rgb))
                         };
                     } catch (Throwable e) {
                         //noop

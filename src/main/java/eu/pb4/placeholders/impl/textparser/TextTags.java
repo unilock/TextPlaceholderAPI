@@ -336,13 +336,11 @@ public final class TextTags {
                                 final float finalSaturation = saturation;
                                 final int finalOverriddenLength = overriddenLength;
 
-                                // TODO
-//                                return out.value(new GradientNode(out.nodes(), finalOverriddenLength < 0
-//                                        ? (pos, length) -> TextColor.fromRgb(GeneralUtils.hvsToRgb((((pos * finalFreq) + (finalFreqLength * length)) / (length + 1) + finalOffset) % 1, finalSaturation, 1))
-//                                        : (pos, length) -> TextColor.fromRgb(GeneralUtils.hvsToRgb((((pos * finalFreq) + (finalFreqLength * length)) / (finalOverriddenLength + 1) + finalOffset) % 1, finalSaturation, 1))
-//
-//                                ));
-                                return out.value(new GradientNode(out.nodes(), (pos, length) -> TextFormatting.WHITE));
+                                return out.value(new GradientNode(out.nodes(), finalOverriddenLength < 0
+                                        ? (pos, length) -> GeneralUtils.rgbToTextColor(GeneralUtils.hvsToRgb((((pos * finalFreq) + (finalFreqLength * length)) / (length + 1) + finalOffset) % 1, finalSaturation, 1))
+                                        : (pos, length) -> GeneralUtils.rgbToTextColor(GeneralUtils.hvsToRgb((((pos * finalFreq) + (finalFreqLength * length)) / (finalOverriddenLength + 1) + finalOffset) % 1, finalSaturation, 1))
+
+                                ));
                             }
                     )
             );
@@ -404,12 +402,10 @@ public final class TextTags {
 
                                     float value = MathHelper.clamp(colorB.v() * progress + colorA.v() * (1 - progress), 0, 1);
 
-                                    // TODO
-//                                    return TextColor.fromRgb(GeneralUtils.hvsToRgb(
-//                                            MathHelper.clamp(hue, 0, 1),
-//                                            sat,
-//                                            value));
-                                    return TextFormatting.WHITE;
+                                    return GeneralUtils.rgbToTextColor(GeneralUtils.hvsToRgb(
+                                            MathHelper.clamp(hue, 0, 1),
+                                            sat,
+                                            value));
                                 }));
                             }
                     )
