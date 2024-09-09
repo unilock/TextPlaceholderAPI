@@ -3,6 +3,7 @@ package eu.pb4.placeholders.api.node.parent;
 import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.node.TextNode;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextFormatting;
 
 public final class ColorNode extends ParentNode {
@@ -14,7 +15,7 @@ public final class ColorNode extends ParentNode {
     }
 
     @Override
-    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) {
+    protected ITextComponent applyFormatting(TextComponentBase out, ParserContext context) {
         return out.setStyle(out.getStyle().setColor(this.color));
     }
 

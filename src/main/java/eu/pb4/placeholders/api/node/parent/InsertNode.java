@@ -4,6 +4,7 @@ import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.parsers.NodeParser;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentBase;
 
 public final class InsertNode extends ParentNode {
     private final TextNode value;
@@ -18,7 +19,7 @@ public final class InsertNode extends ParentNode {
     }
 
     @Override
-    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) {
+    protected ITextComponent applyFormatting(TextComponentBase out, ParserContext context) {
         return out.setStyle(out.getStyle().setInsertion(value.toText(context, true).getUnformattedText()));
     }
 

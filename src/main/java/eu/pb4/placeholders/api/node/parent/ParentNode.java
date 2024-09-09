@@ -4,6 +4,7 @@ import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.impl.GeneralUtils;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentBase;
 
 public class ParentNode implements ParentTextNode {
     public static final ParentNode EMPTY = new ParentNode(new TextNode[0]);
@@ -35,9 +36,9 @@ public class ParentNode implements ParentTextNode {
                 return out;
             }
 
-            return (this.applyFormatting(out.createCopy(), context)).setStyle(out.getStyle());
+            return (this.applyFormatting((TextComponentBase) out.createCopy(), context)).setStyle(out.getStyle());
         } else {
-            ITextComponent base = compact ? null : GeneralUtils.emptyText();
+            TextComponentBase base = compact ? null : GeneralUtils.emptyText();
 
             for (int i = 0; i < this.children.length; i++) {
                 if (this.children[i] != null) {
@@ -46,7 +47,7 @@ public class ParentNode implements ParentTextNode {
                     if (!GeneralUtils.isEmpty(child)) {
                         if (base == null) {
                             if (child.getStyle().isEmpty()) {
-                                base = child.createCopy();
+                                base = (TextComponentBase) child.createCopy();
                             } else {
                                 base = GeneralUtils.emptyText();
                                 base.appendSibling(child);
@@ -66,5 +67,5 @@ public class ParentNode implements ParentTextNode {
         }
     }
 
-    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) { return out; };
+    protected ITextComponent applyFormatting(TextComponentBase out, ParserContext context) { return out; };
 }

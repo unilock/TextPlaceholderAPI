@@ -4,6 +4,7 @@ package eu.pb4.placeholders.api.node.parent;
 //import node.api.eu.pb4.placeholders.TextNode;
 //import net.minecraft.util.ResourceLocation;
 //import net.minecraft.util.text.ITextComponent;
+//import net.minecraft.util.text.TextComponentBase;
 //
 //public final class FontNode extends ParentNode {
 //    private final ResourceLocation font;
@@ -14,7 +15,7 @@ package eu.pb4.placeholders.api.node.parent;
 //    }
 //
 //    @Override
-//    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) {
+//    protected ITextComponent applyFormatting(TextComponentBase out, ParserContext context) {
 //        return out.setStyle(out.getStyle().setFont(font));
 //    }
 //

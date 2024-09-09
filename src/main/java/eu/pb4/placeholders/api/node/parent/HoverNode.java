@@ -6,6 +6,7 @@ import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.parsers.NodeParser;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -21,7 +22,7 @@ public final class HoverNode<T> extends ParentNode {
     }
 
     @Override
-    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) {
+    protected ITextComponent applyFormatting(TextComponentBase out, ParserContext context) {
         if (this.action == Action.TEXT) {
             return out.setStyle(out.getStyle().setHoverEvent(new HoverEvent(this.action.vanillaType(), ((ParentTextNode) this.value).toText(context, true))));
         } else if (this.action == Action.ENTITY) {

@@ -6,6 +6,7 @@ import eu.pb4.placeholders.api.parsers.NodeParser;
 import eu.pb4.placeholders.impl.GeneralUtils;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 
@@ -65,7 +66,7 @@ public final class StyledNode extends ParentNode {
     }
 
     @Override
-    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) {
+    protected ITextComponent applyFormatting(TextComponentBase out, ParserContext context) {
         return (out.getStyle() == GeneralUtils.emptyStyle() ? out : GeneralUtils.emptyText().appendSibling(out)).setStyle(this.style(context));
     }
 

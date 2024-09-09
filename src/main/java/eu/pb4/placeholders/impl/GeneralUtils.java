@@ -39,7 +39,7 @@ public class GeneralUtils {
                ) && text.getSiblings().isEmpty();
     }
 
-    public static ITextComponent toGradient(ITextComponent base, GradientNode.GradientProvider posToColor) {
+    public static TextComponentBase toGradient(TextComponentBase base, GradientNode.GradientProvider posToColor) {
         return recursiveGradient(base, posToColor, 0, getGradientLength(base)).text();
     }
 
@@ -55,7 +55,7 @@ public class GeneralUtils {
 
     private static TextLengthPair recursiveGradient(ITextComponent base, GradientNode.GradientProvider posToColor, int pos, int totalLength) {
         if (base.getStyle().getColor() == null) {
-            ITextComponent out = GeneralUtils.emptyText().setStyle(base.getStyle());
+            TextComponentBase out = (TextComponentBase) GeneralUtils.emptyText().setStyle(base.getStyle());
             if (base instanceof TextComponentString literalTextContent) {
                 for (String letter : literalTextContent.getText().replaceAll("\\p{So}|.", "$0\0").split("\0+")) {
                     if (!letter.isEmpty()) {
@@ -75,7 +75,7 @@ public class GeneralUtils {
             }
             return new TextLengthPair(out, pos);
         }
-        return new TextLengthPair(base.createCopy(), pos + base.getUnformattedText().length());
+        return new TextLengthPair((TextComponentBase) base.createCopy(), pos + base.getUnformattedText().length());
     }
 
     public static int hvsToRgb(float hue, float saturation, float value) {
@@ -160,8 +160,8 @@ public class GeneralUtils {
 
     }
 
-    public static ITextComponent cloneText(ITextComponent input) {
-        ITextComponent baseText;
+    public static TextComponentBase cloneText(ITextComponent input) {
+        TextComponentBase baseText;
         if (input instanceof TextComponentTranslation translatable) {
             var obj = new ArrayList<>();
 
@@ -175,7 +175,7 @@ public class GeneralUtils {
 
             baseText = new TextComponentTranslation(translatable.getKey(), obj.toArray());
         } else {
-            baseText = input.createCopy();
+            baseText = (TextComponentBase) input.createCopy();
         }
 
         for (var sibling : input.getSiblings()) {
@@ -258,7 +258,7 @@ public class GeneralUtils {
         }
     }
 
-    public static ITextComponent emptyText() {
+    public static TextComponentBase emptyText() {
         return new TextComponentString("");
     }
 
@@ -271,7 +271,7 @@ public class GeneralUtils {
     }
 
     @Desugar
-    public record TextLengthPair(ITextComponent text, int length) {
+    public record TextLengthPair(TextComponentBase text, int length) {
         public static final TextLengthPair EMPTY = new TextLengthPair(null, 0);
     }
 

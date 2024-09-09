@@ -4,6 +4,7 @@ import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.placeholders.api.node.TextNode;
 import eu.pb4.placeholders.api.parsers.NodeParser;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.event.ClickEvent;
 
 public final class ClickActionNode extends ParentNode {
@@ -25,7 +26,7 @@ public final class ClickActionNode extends ParentNode {
     }
 
     @Override
-    protected ITextComponent applyFormatting(ITextComponent out, ParserContext context) {
+    protected ITextComponent applyFormatting(TextComponentBase out, ParserContext context) {
         return out.setStyle(out.getStyle().setClickEvent(new ClickEvent(this.action, this.value.toText(context, true).getFormattedText())));
     }
 
